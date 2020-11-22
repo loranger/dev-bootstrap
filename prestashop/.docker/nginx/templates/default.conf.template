@@ -139,9 +139,9 @@ server {
     }
 
     # [REQUIRED EDIT] Change this block to your admin folder
-    location /${APP_ADMIN}/ {
+    location /${PS_FOLDER_ADMIN}/ {
         if (!-e $request_filename) {
-            rewrite ^/.*$ /${APP_ADMIN}/index.php last;
+            rewrite ^/.*$ /${PS_FOLDER_ADMIN}/index.php last;
         }
     }
 

@@ -8,13 +8,13 @@ services:
     env_file:
       - .env
     volumes:
-      - ./.docker/nginx/templates:/etc/nginx/templates
-      - .:/var/www/app
+      - ./.docker/nginx/templates:/etc/nginx/templates:cached
+      - .:/var/www/app:delegated
       # - ./.docker/logs/nginx:/var/log/nginx
     networks:
       - web
     labels:
-      - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
+      - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${PS_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
     depends_on:
       - php-fpm
@@ -22,18 +22,15 @@ services:
   php-fpm:
     container_name: ${APP_PROJECT}-php-fpm
     image: ${APP_PROJECT}-php-fpm
-    build:
-      context: .
-      dockerfile: ./.docker/php-fpm/Dockerfile
+    build: .docker/php-fpm/
     env_file:
       - .env
     networks:
       - web
     volumes:
-      - .:/var/www/app/
-      - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
-      - ./.docker/php-fpm/install_prestashop.sh:/usr/local/bin/install_prestashop # docker-compose exec php-fpm install_prestashop
-      # - ./.docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - .:/var/www/app/:delegated
+      - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
+      - ./.docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:cached
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -43,12 +40,24 @@ services:
     env_file:
       - .env
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWD}
     volumes:
-      - ./.docker/database:/var/lib/mysql
+      - ./.docker/database:/var/lib/mysql:delegated
+      # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    networks:
+      - web
+
+  adminer:
+    container_name: ${APP_PROJECT}-adminer
+    image: adminer:latest
+    environment:
+        ADMINER_DEFAULT_SERVER: ${DB_SERVER}
+        ADMINER_DESIGN: galkaev
+    ports:
+      - 8888:8080
     networks:
       - web
 

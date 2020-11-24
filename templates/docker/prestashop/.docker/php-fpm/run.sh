@@ -33,16 +33,18 @@ set -e
 if [ ! -f ./config/settings.inc.php ]; then
     if [ $PS_INSTALL_AUTO = 1 ]; then
 
-        echo "* Downloading PrestaShop, this may take a while ...";
+        if [ ! -d ./config ]; then
+            echo "* Downloading PrestaShop, this may take a while ...";
 
-        latest=$(curl -s https://api.github.com/repos/prestashop/prestashop/releases/latest | grep "browser_download_url.*zip" | cut -d '"' -f 4)
-        curl -s -L -o /var/www/app/latest.zip "$latest"
-        su - www-data -s /bin/bash -c '/usr/bin/unzip -qq -o /var/www/app/latest.zip -d /var/www/app/'
-        rm -f /var/www/app/latest.zip
+            latest=$(curl -s https://api.github.com/repos/prestashop/prestashop/releases/latest | grep "browser_download_url.*zip" | cut -d '"' -f 4)
+            curl -s -L -o /var/www/app/latest.zip "$latest"
+            su - www-data -s /bin/bash -c '/usr/bin/unzip -qq -o /var/www/app/latest.zip -d /var/www/app/'
+            rm -f /var/www/app/latest.zip
 
-        echo "* Expanding PrestaShop, this may take a while ...";
+            echo "* Expanding PrestaShop, this may take a while ...";
 
-        su - www-data -s /bin/bash -c '/usr/bin/unzip -qq -o /var/www/app/prestashop.zip -d /var/www/app/'
+            su - www-data -s /bin/bash -c '/usr/bin/unzip -qq -o /var/www/app/prestashop.zip -d /var/www/app/'
+        fi
 
         echo "* Installing PrestaShop, this may take a while ...";
 

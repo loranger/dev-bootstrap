@@ -70,6 +70,10 @@ function init-git () {
 
     git init
     git add .
+
+    if [ -z ${projectname} ]; then
+        projectname=$(basename `pwd`)
+    fi
     git commit -m ":tada: $projectname initial commit"
 }
 

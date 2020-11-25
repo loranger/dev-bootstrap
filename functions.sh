@@ -27,13 +27,11 @@ function init-project-path () {
 
 function init-project-structure-for () {
     source ${template_path}/init/$1/init.sh "$projectname"
-    # cd `slugify $projectname`
 }
 
 function init-docker-for () {
     if [ $# -eq 0 ]
     then
-        # templates=($(basename -a ${template_path}/init/docker/*/))
         available-templates-for "docker"
         PS3="Select you docker template: "
         select type in $templates;

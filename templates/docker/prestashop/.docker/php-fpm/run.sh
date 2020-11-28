@@ -30,10 +30,10 @@ fi
 # From now, stop at error
 set -e
 
-if [ ! -f ./config/settings.inc.php ]; then
+if [ ! -f /var/www/app/config/settings.inc.php ]; then
     if [ $PS_INSTALL_AUTO = 1 ]; then
 
-        if [ ! -d ./config ]; then
+        if [ ! -d /var/www/app/config ]; then
             echo "* Downloading PrestaShop, this may take a while ...";
 
             latest=$(curl -s https://api.github.com/repos/prestashop/prestashop/releases/latest | grep "browser_download_url.*zip" | cut -d '"' -f 4)

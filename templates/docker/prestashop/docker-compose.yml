@@ -55,7 +55,7 @@ services:
     image: adminer:latest
     environment:
         ADMINER_DEFAULT_SERVER: ${DB_SERVER}
-        ADMINER_DESIGN: galkaev
+        ADMINER_DESIGN: flat
     ports:
       - 8888:8080
     networks:

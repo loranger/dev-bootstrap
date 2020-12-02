@@ -37,9 +37,12 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN groupmod -g 1000 www-data \
   && usermod -u 1000 -g 1000 www-data
 
-COPY /run.sh /tmp/
-RUN chmod +x /tmp/run.sh
+COPY /set_shop.sh /usr/local/bin/set_shop
+RUN chmod +x /usr/local/bin/set_shop
+
+COPY /run.sh /usr/local/bin/run_prestashop
+RUN chmod +x /usr/local/bin/run_prestashop
 
 WORKDIR /var/www/app
 
-CMD ["/tmp/run.sh"]
+CMD ["/usr/local/bin/run_prestashop"]

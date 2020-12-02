@@ -67,6 +67,7 @@ function init-git () {
     find . -type d -mindepth 2 -name .git | xargs rm -rf \{\};
 
     git init
+    git add .gitignore
     git add .
 
     if [ -z ${projectname} ]; then

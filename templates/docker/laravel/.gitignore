@@ -12,3 +12,5 @@ npm-debug.log
 yarn-error.log
 docker-compose.yml
 docker-compose.yaml
+.docker/database
+.docker/logs

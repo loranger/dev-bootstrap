@@ -40,4 +40,6 @@ RUN groupmod -g 1000 www-data \
 COPY /run.sh /tmp/
 RUN chmod +x /tmp/run.sh
 
+WORKDIR /var/www/app
+
 CMD ["/tmp/run.sh"]

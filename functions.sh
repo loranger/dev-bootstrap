@@ -54,12 +54,18 @@ function init-docker-for () {
     if [ -z ${projectname} ]; then
         projectname=$(basename `pwd`)
     fi
-    if [ -f .env ]; then
-        sed -i '' -e "s/project/`slugify $projectname`/g" .env
-    fi
-    if [ -f .env.example ]; then
-        sed -i '' -e "s/project/`slugify $projectname`/g" .env.example
-    fi
+
+    for envfile in .env .env.example
+    do
+        if [ -f $envfile ]; then
+            if grep -q "APP_PROJECT=" $envfile; then
+                sed -i '' -e "s/project/`slugify $projectname`/g" $envfile
+            else
+                sed -i '' -e "/^APP_URL=.*/a\\
+APP_PROJECT=`slugify $projectname`" $envfile
+            fi
+        fi
+    done
 }
 
 function init-git () {

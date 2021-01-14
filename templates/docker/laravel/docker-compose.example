@@ -46,11 +46,12 @@ services:
 
 # # docker-compose run --rm npm install
 #   npm:
-#     image: node:latest
+#     image: node:alpine
 #     container_name: ${APP_PROJECT}-npm
 #     volumes:
 #       - .:/var/www/app/
 #     working_dir: /var/www/app/
+#     user: "node"
 #     entrypoint: ['npm', '--no-bin-links']
 #     networks:
 #       - web

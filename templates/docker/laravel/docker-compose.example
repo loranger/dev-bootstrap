@@ -73,7 +73,7 @@ services:
     container_name: ${APP_PROJECT}-mariadb
     image: mariadb:latest
     ports:
-      - "3306:3306"
+      - "${FORWARD_DB_PORT:-3306}:3306"
     env_file:
       - .env
     environment:
@@ -85,6 +85,24 @@ services:
       - ./.docker/database:/var/lib/mysql
     networks:
       - web
+
+  # redis:
+  #   container_name: ${APP_PROJECT}-redis
+  #   image: 'redis:alpine'
+  #   ports:
+  #     - '${FORWARD_REDIS_PORT:-6379}:6379'
+  #   volumes:
+  #     - ./.docker/cache:/data
+  #   networks:
+  #     - web
+
+  # memcached:
+  #   container_name: ${APP_PROJECT}-memcached
+  #   image: 'memcached:alpine'
+  #   ports:
+  #     - '${FORWARD_REDIS_PORT:-11211}:11211'
+  #   networks:
+  #     - web
 
 networks:
   web:

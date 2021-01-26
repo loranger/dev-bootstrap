@@ -1,20 +1,112 @@
 version: "3.4"
 services:
-  site:
-    build:
-      context: .
-      dockerfile: .docker/php/Dockerfile
+
+  nginx:
+    container_name: ${APP_PROJECT}-nginx
+    image: nginx:stable-alpine
     env_file:
       - .env
     volumes:
-      - ./:/grav:delegated
-    command: "php -S 0.0.0.0:80 /grav/system/router.php"
+      - ./.docker/config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/app
+      - ./.docker/logs/nginx:/var/log/nginx
     networks:
       - web
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
+    depends_on:
+      - php-fpm
+
+  php-fpm:
+    container_name: ${APP_PROJECT}-php-fpm
+    image: ${APP_PROJECT}-php-fpm
+    build:
+      context: .
+      dockerfile: ./.docker/php-fpm/Dockerfile
+    env_file:
+      - .env
+    networks:
+      - web
+    volumes:
+      - .:/var/www/app/:rw
+
+# docker-compose run --rm composer require machin/truc
+  composer:
+    image: composer:latest
+    container_name: ${APP_PROJECT}-composer
+    volumes:
+      - .:/var/www/app
+    working_dir: /var/www/app
+    depends_on:
+      - php-fpm
+    networks:
+      - web
+
+# docker-compose run --rm grav install
+  grav:
+    container_name: ${APP_PROJECT}-grav
+    image: ${APP_PROJECT}-grav
+    build:
+      context: .
+      dockerfile: ./.docker/php-cli/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www/app/:rw
+    working_dir: /var/www/app/
+    entrypoint: ['bin/grav']
+    networks:
+      - web
+
+# docker-compose run --rm gpm install admin
+  gpm:
+    container_name: ${APP_PROJECT}-gpm
+    image: ${APP_PROJECT}-gpm
+    build:
+      context: .
+      dockerfile: ./.docker/php-cli/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www/app/:rw
+    working_dir: /var/www/app/
+    entrypoint: ['bin/gpm']
+    networks:
+      - web
+
+# docker-compose run --rm plugin
+  plugin:
+    container_name: ${APP_PROJECT}-plugin
+    image: ${APP_PROJECT}-plugin
+    build:
+      context: .
+      dockerfile: ./.docker/php-cli/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - .:/var/www/app/:rw
+    working_dir: /var/www/app/
+    entrypoint: ['bin/plugin']
+    networks:
+      - web
+
+# custom working_dir may be required
+# docker-compose run --rm npm install
+  npm:
+    container_name: ${APP_PROJECT}-npm
+    image: ${APP_PROJECT}-npm
+    build:
+      context: .
+      dockerfile: ./.docker/node/Dockerfile
+    volumes:
+      - .:/var/www/app/
+    working_dir: /var/www/app/user/themes/quark
+    user: "node"
+    entrypoint: ['npm', '--no-bin-links']
+    networks:
+      - web
+
 networks:
   web:
     external: true

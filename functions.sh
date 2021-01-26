@@ -68,6 +68,33 @@ APP_PROJECT=`slugify $projectname`" $envfile
     done
 }
 
+function init-deployer-for () {
+    if [ $# -eq 0 ]
+    then
+        available-templates-for "deployer"
+        PS3="Select you deployer template: "
+        select type in $templates;
+        do
+            break;
+        done
+    else
+        type=$1
+    fi
+
+    template=${template_path}/deployer/${type}
+
+    if [ ! -d "${template}" ]; then
+        echo "$source template does not exists"
+        return 0
+    else
+        \cp -rf $template/. .
+    fi
+
+    if [ -z ${projectname} ]; then
+        projectname=$(basename `pwd`)
+    fi
+}
+
 function init-git () {
     # Remove remaining git repositories installed from .dependencies
     find . -type d -mindepth 2 -name .git | xargs rm -rf \{\};

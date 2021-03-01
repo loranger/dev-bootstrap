@@ -59,9 +59,9 @@ function init-docker-for () {
     do
         if [ -f $envfile ]; then
             if grep -q "APP_PROJECT=" $envfile; then
-                sed -i '' -e "s/project/`slugify $projectname`/g" $envfile
+                sed -i -e "s/project/`slugify $projectname`/g" $envfile
             else
-                sed -i '' -e "/^APP_URL=.*/a\\
+                sed -i -e "/^APP_URL=.*/a\\
 APP_PROJECT=`slugify $projectname`" $envfile
             fi
         fi

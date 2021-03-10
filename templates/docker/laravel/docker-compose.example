@@ -73,8 +73,8 @@ services:
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
     image: mariadb:latest
-    ports:
-      - "${FORWARD_DB_PORT:-3306}:3306"
+#    ports:
+#      - "${FORWARD_DB_PORT:-3306}:3306"
     env_file:
       - .env
     environment:

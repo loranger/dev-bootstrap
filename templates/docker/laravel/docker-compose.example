@@ -35,13 +35,13 @@ services:
 
 # docker-compose run --rm composer require machin/truc
   composer:
-    image: composer:latest
+    build:
+      context: .
+      dockerfile: ./.docker/php-fpm/Dockerfile
     container_name: ${APP_PROJECT}-composer
     volumes:
       - .:/var/www/app
-    working_dir: /var/www/app
-    depends_on:
-      - php-fpm
+    entrypoint: ['/usr/bin/composer']
     networks:
       - internal
 

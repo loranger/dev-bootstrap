@@ -12,6 +12,7 @@ services:
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     networks:
+      - internal
       - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
@@ -28,7 +29,7 @@ services:
     env_file:
       - .env
     networks:
-      - web
+      - internal
     volumes:
       - .:/var/www/app/:rw
 
@@ -42,7 +43,7 @@ services:
     depends_on:
       - php-fpm
     networks:
-      - web
+      - internal
 
 # # docker-compose run --rm npm install
 #   npm:
@@ -54,7 +55,7 @@ services:
 #     user: "node"
 #     entrypoint: ['npm', '--no-bin-links']
 #     networks:
-#       - web
+#       - internal
 
 # docker-compose run --rm artisan key:generate
   artisan:
@@ -68,7 +69,7 @@ services:
       - mariadb
     entrypoint: ['/var/www/app/artisan']
     networks:
-      - web
+      - internal
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -85,7 +86,7 @@ services:
     volumes:
       - ./.docker/database:/var/lib/mysql
     networks:
-      - web
+      - internal
 
   # redis:
   #   container_name: ${APP_PROJECT}-redis
@@ -95,7 +96,7 @@ services:
   #   volumes:
   #     - ./.docker/cache:/data
   #   networks:
-  #     - web
+  #     - internal
 
   # memcached:
   #   container_name: ${APP_PROJECT}-memcached
@@ -103,8 +104,10 @@ services:
   #   ports:
   #     - '${FORWARD_REDIS_PORT:-11211}:11211'
   #   networks:
-  #     - web
+  #     - internal
 
 networks:
   web:
     external: true
+  internal:
+    driver: bridge

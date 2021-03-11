@@ -12,7 +12,6 @@ services:
     networks:
       - web
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
 networks:

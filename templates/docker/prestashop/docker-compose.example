@@ -12,6 +12,7 @@ services:
       - .:/var/www/app:delegated
       # - ./.docker/logs/nginx:/var/log/nginx
     networks:
+      - internal
       - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${PS_DOMAIN}`)"
@@ -26,7 +27,7 @@ services:
     env_file:
       - .env
     networks:
-      - web
+      - internal
     volumes:
       - .:/var/www/app/:delegated
       - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
@@ -35,8 +36,8 @@ services:
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
     image: mariadb:latest
-    ports:
-      - "3306:3306"
+    # ports:
+    #   - "3306:3306"
     env_file:
       - .env
     environment:
@@ -48,7 +49,7 @@ services:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
     networks:
-      - web
+      - internal
 
   adminer:
     container_name: ${APP_PROJECT}-adminer
@@ -59,8 +60,10 @@ services:
     ports:
       - 8888:8080
     networks:
-      - web
+      - internal
 
 networks:
   web:
     external: true
+  internal:
+    driver: bridge

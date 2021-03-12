@@ -1,14 +1,30 @@
 FROM php:fpm-alpine
 
+# Mandatory depencencies
 RUN apk add --update --no-cache \
-  libzip-dev libpng-dev \
+  libzip-dev libpng-dev icu icu-dev \
   && rm -rf /var/cache/apk/*
 
+# Enable PHP extensions
 # ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
-RUN docker-php-ext-install bcmath gd zip pdo pdo_mysql
+RUN docker-php-ext-install bcmath gd zip pdo pdo_mysql intl
 
+# Handle locales
+ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl
+ENV MUSL_LOCPATH /usr/share/i18n/locales/musl
+
+RUN apk add --no-cache \
+    $MUSL_LOCALE_DEPS \
+    && wget https://gitlab.com/rilian-la-te/musl-locales/-/archive/master/musl-locales-master.zip \
+    && unzip musl-locales-master.zip \
+      && cd musl-locales-master \
+      && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
+      && cd .. && rm -r musl-locales-master
+
+# Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Enable schedule task runner
 COPY .docker/php-fpm/run-scheduler.sh /usr/bin/run-scheduler
 
 # RUN apk add --update \

@@ -9,6 +9,8 @@ RUN docker-php-ext-install bcmath gd zip pdo pdo_mysql
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+COPY .docker/php-fpm/run-scheduler.sh /usr/bin/run-scheduler
+
 # RUN apk add --update \
 #   sqlite \
 #   && rm -rf /var/cache/apk/*

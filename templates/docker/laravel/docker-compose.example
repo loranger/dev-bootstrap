@@ -35,12 +35,11 @@ services:
 
 # docker-compose run --rm composer require machin/truc
   composer:
-    build:
-      context: .
-      dockerfile: ./.docker/php-fpm/Dockerfile
+    image: ${APP_PROJECT}-php-fpm
     container_name: ${APP_PROJECT}-composer
     volumes:
       - .:/var/www/app
+    working_dir: /var/www/app/
     entrypoint: ['/usr/bin/composer']
     networks:
       - internal
@@ -53,15 +52,14 @@ services:
 #       - .:/var/www/app/
 #     working_dir: /var/www/app/
 #     user: "node"
-#     entrypoint: ['npm', '--no-bin-links']
+##     entrypoint: ['npm', '--no-bin-links']
+#     entrypoint: ['npm']
 #     networks:
 #       - internal
 
 # docker-compose run --rm artisan key:generate
   artisan:
-    build:
-      context: .
-      dockerfile: ./.docker/php-fpm/Dockerfile
+    image: ${APP_PROJECT}-php-fpm
     container_name: ${APP_PROJECT}-artisan
     volumes:
       - .:/var/www/app
@@ -70,6 +68,17 @@ services:
     entrypoint: ['/var/www/app/artisan']
     networks:
       - internal
+
+  scheduler:
+    image: ${APP_PROJECT}-php-fpm
+    command: /usr/bin/run-scheduler
+    container_name: ${APP_PROJECT}-scheduler
+    restart: unless-stopped
+    working_dir: /var/www/app/
+    volumes:
+      - .:/var/www/app
+    networks:
+      - web
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb

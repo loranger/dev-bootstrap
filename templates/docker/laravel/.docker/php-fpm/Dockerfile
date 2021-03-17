@@ -2,8 +2,7 @@ FROM php:fpm-alpine
 
 # Mandatory depencencies
 RUN apk add --update --no-cache \
-  libzip-dev libpng-dev icu icu-dev \
-  && rm -rf /var/cache/apk/*
+  libzip-dev libpng-dev icu icu-dev
 
 # Enable PHP extensions
 # ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
@@ -21,6 +20,13 @@ RUN apk add --no-cache \
       && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
       && cd .. && rm -r musl-locales-master
 
+# Use local timezone
+RUN apk upgrade --update \
+  && apk add -U tzdata \
+  && cp /usr/share/zoneinfo/Europe/Paris /etc/localtime \
+  && apk del tzdata
+
+
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -30,3 +36,5 @@ COPY .docker/php-fpm/run-scheduler.sh /usr/bin/run-scheduler
 # RUN apk add --update \
 #   sqlite \
 #   && rm -rf /var/cache/apk/*
+
+RUN rm -rf /var/cache/apk/*

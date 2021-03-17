@@ -75,6 +75,8 @@ services:
     container_name: ${APP_PROJECT}-scheduler
     restart: unless-stopped
     working_dir: /var/www/app/
+    depends_on:
+      - mariadb
     volumes:
       - .:/var/www/app
     networks:
@@ -92,6 +94,7 @@ services:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_USER=${DB_USERNAME}
       - MYSQL_PASSWORD=${DB_PASSWORD}
+      - TZ=Europe/Paris
     volumes:
       - ./.docker/database:/var/lib/mysql
     networks:

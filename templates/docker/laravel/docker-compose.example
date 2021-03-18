@@ -40,6 +40,7 @@ services:
     volumes:
       - .:/var/www/app
     working_dir: /var/www/app/
+    command: -V
     entrypoint: ['/usr/bin/composer']
     networks:
       - internal
@@ -52,7 +53,7 @@ services:
       - .:/var/www/app/
     working_dir: /var/www/app/
     user: "node"
-#     entrypoint: ['npm', '--no-bin-links']
+    command: -v
     entrypoint: ['npm']
     networks:
       - internal
@@ -65,6 +66,7 @@ services:
       - .:/var/www/app
     depends_on:
       - mariadb
+    command: inspire
     entrypoint: ['/var/www/app/artisan']
     networks:
       - internal

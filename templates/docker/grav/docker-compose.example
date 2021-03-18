@@ -34,13 +34,13 @@ services:
 
 # docker-compose run --rm composer require machin/truc
   composer:
-    image: composer:latest
+    image: ${APP_PROJECT}-php-fpm
     container_name: ${APP_PROJECT}-composer
     volumes:
       - .:/var/www/app
-    working_dir: /var/www/app
-    depends_on:
-      - php-fpm
+    working_dir: /var/www/app/
+    command: -V
+    entrypoint: ['/usr/bin/composer']
     networks:
       - internal
 
@@ -93,7 +93,6 @@ services:
       - internal
 
 # custom working_dir may be required
-# docker-compose run --rm npm install
   npm:
     container_name: ${APP_PROJECT}-npm
     image: ${APP_PROJECT}-npm
@@ -104,7 +103,8 @@ services:
       - .:/var/www/app/
     working_dir: /var/www/app/user/themes/quark
     user: "node"
-    entrypoint: ['npm', '--no-bin-links']
+    command: -v
+    entrypoint: ['npm']
     networks:
       - internal
 

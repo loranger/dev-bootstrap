@@ -44,18 +44,18 @@ services:
     networks:
       - internal
 
-# # docker-compose run --rm npm install
-#   npm:
-#     image: node:alpine
-#     container_name: ${APP_PROJECT}-npm
-#     volumes:
-#       - .:/var/www/app/
-#     working_dir: /var/www/app/
-#     user: "node"
-##     entrypoint: ['npm', '--no-bin-links']
-#     entrypoint: ['npm']
-#     networks:
-#       - internal
+# docker-compose run --rm npm install
+  npm:
+    image: node:alpine
+    container_name: ${APP_PROJECT}-npm
+    volumes:
+      - .:/var/www/app/
+    working_dir: /var/www/app/
+    user: "node"
+#     entrypoint: ['npm', '--no-bin-links']
+    entrypoint: ['npm']
+    networks:
+      - internal
 
 # docker-compose run --rm artisan key:generate
   artisan:
@@ -85,8 +85,8 @@ services:
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
     image: mariadb:latest
-#    ports:
-#      - "${FORWARD_DB_PORT:-3306}:3306"
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
     env_file:
       - .env
     environment:

@@ -12,7 +12,6 @@ services:
       - .:/var/www/app:delegated
       # - ./.docker/logs/nginx:/var/log/nginx
     networks:
-      - internal
       - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${PS_DOMAIN}`)"
@@ -27,7 +26,7 @@ services:
     env_file:
       - .env
     networks:
-      - internal
+      - web
     volumes:
       - .:/var/www/app/:delegated
       - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
@@ -50,7 +49,7 @@ services:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
     networks:
-      - internal
+      - web
 
   adminer:
     container_name: ${APP_PROJECT}-adminer
@@ -61,10 +60,8 @@ services:
     ports:
       - 8888:8080
     networks:
-      - internal
+      - web
 
 networks:
   web:
     external: true
-  internal:
-    driver: bridge

@@ -11,7 +11,6 @@ services:
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     networks:
-      - internal
       - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
@@ -28,7 +27,7 @@ services:
     env_file:
       - .env
     networks:
-      - internal
+      - web
     volumes:
       - .:/var/www/app/:rw
 
@@ -42,7 +41,7 @@ services:
     command: -V
     entrypoint: ['/usr/bin/composer']
     networks:
-      - internal
+      - web
 
 # docker-compose run --rm grav install
   grav:
@@ -59,7 +58,7 @@ services:
     command: -V
     entrypoint: ['bin/grav']
     networks:
-      - internal
+      - web
 
 # docker-compose run --rm gpm install admin
   gpm:
@@ -76,7 +75,7 @@ services:
     command: -V
     entrypoint: ['bin/gpm']
     networks:
-      - internal
+      - web
 
 # docker-compose run --rm plugin
   plugin:
@@ -93,7 +92,7 @@ services:
     command: login -V
     entrypoint: ['bin/plugin']
     networks:
-      - internal
+      - web
 
 # custom working_dir may be required
   npm:
@@ -109,10 +108,8 @@ services:
     command: -v
     entrypoint: ['npm']
     networks:
-      - internal
+      - web
 
 networks:
   web:
     external: true
-  internal:
-    driver: bridge

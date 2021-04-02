@@ -12,7 +12,6 @@ services:
       - ./.docker/config/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
     networks:
-      - internal
       - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
@@ -32,7 +31,7 @@ services:
     volumes:
       - .:/var/www/
     networks:
-      - internal
+      - web
     depends_on:
         - db
 
@@ -46,7 +45,7 @@ services:
       - .:/var/www
     entrypoint: ['/var/www/bin/console']
     networks:
-      - internal
+      - web
 
   db:
     container_name: ${APP_PROJECT}-db
@@ -63,10 +62,8 @@ services:
     volumes:
         - ./.docker/database:/var/lib/mysql
     networks:
-        - internal
+        - web
 
 networks:
   web:
     external: true
-  internal:
-    driver: bridge

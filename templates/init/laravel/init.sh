@@ -6,3 +6,5 @@ echo "Creating “$1” Laravel project"
 composer create-project --prefer-dist laravel/laravel `slugify $1`
 
 cd `slugify $1`
+
+chmod -R o+w storage

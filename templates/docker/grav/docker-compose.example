@@ -7,7 +7,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./.docker/config/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./.docker/config/nginx.conf:/etc/nginx/templates/default.conf.template
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     networks:

@@ -56,6 +56,7 @@ services:
     volumes:
       - .:/var/www/app/:rw
     working_dir: /var/www/app/
+    command: -V
     entrypoint: ['bin/grav']
     networks:
       - internal
@@ -72,6 +73,7 @@ services:
     volumes:
       - .:/var/www/app/:rw
     working_dir: /var/www/app/
+    command: -V
     entrypoint: ['bin/gpm']
     networks:
       - internal
@@ -88,6 +90,7 @@ services:
     volumes:
       - .:/var/www/app/:rw
     working_dir: /var/www/app/
+    command: login -V
     entrypoint: ['bin/plugin']
     networks:
       - internal

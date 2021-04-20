@@ -33,6 +33,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Enable schedule task runner
 COPY .docker/php-fpm/run-scheduler.sh /usr/bin/run-scheduler
 
+# Enable tinker local permissions
+ENV XDG_CONFIG_HOME=/tmp
+
 # RUN apk add --update \
 #   sqlite \
 #   && rm -rf /var/cache/apk/*

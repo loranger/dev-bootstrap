@@ -26,6 +26,8 @@ RUN apk upgrade --update \
   && cp /usr/share/zoneinfo/Europe/Paris /etc/localtime \
   && apk del tzdata
 
+# Mysql client availability (artisan db)
+RUN apk add mysql-client
 
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer

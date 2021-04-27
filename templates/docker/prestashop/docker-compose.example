@@ -49,7 +49,6 @@ services:
     volumes:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
-    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - web
 

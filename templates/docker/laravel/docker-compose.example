@@ -103,7 +103,6 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./.docker/database:/var/lib/mysql
-    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - web
 

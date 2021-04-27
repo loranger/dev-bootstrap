@@ -8,6 +8,7 @@ services:
       - .env
     volumes:
       - ./:/app:delegated
+    user: "${UID:-1000}:${GID:-1000}"
     command: "php -S 0.0.0.0:80 /app/index.php"
     networks:
       - web

@@ -25,12 +25,13 @@ services:
     build: .docker/php-fpm/
     env_file:
       - .env
-    networks:
-      - web
     volumes:
       - .:/var/www/app/:delegated
       - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
       - ./.docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:cached
+    user: "${UID:-1000}:${GID:-1000}"
+    networks:
+      - web
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -48,6 +49,7 @@ services:
     volumes:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - web
 

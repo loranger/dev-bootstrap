@@ -12,7 +12,6 @@ services:
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     networks:
-      - internal
       - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
@@ -28,10 +27,11 @@ services:
       dockerfile: ./.docker/php-fpm/Dockerfile
     env_file:
       - .env
-    networks:
-      - internal
     volumes:
       - .:/var/www/app/:rw
+    user: "${UID:-1000}:${GID:-1000}"
+    networks:
+      - web
 
 # docker-compose run --rm composer require machin/truc
   composer:
@@ -39,11 +39,12 @@ services:
     container_name: ${APP_PROJECT}-composer
     volumes:
       - .:/var/www/app
+    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
     entrypoint: ['/usr/bin/composer']
     networks:
-      - internal
+      - web
 
 # docker-compose run --rm npm install
   npm:
@@ -51,12 +52,13 @@ services:
     container_name: ${APP_PROJECT}-npm
     volumes:
       - .:/var/www/app/
+    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
     command: -v
     entrypoint: ['npm']
     networks:
-      - internal
+      - web
 
 # docker-compose run --rm artisan key:generate
   artisan:
@@ -64,13 +66,14 @@ services:
     container_name: ${APP_PROJECT}-artisan
     volumes:
       - .:/var/www/app
+    user: "${UID:-1000}:${GID:-1000}"
     depends_on:
       - mariadb
     user: "1000:1000"
     command: inspire
     entrypoint: ['/var/www/app/artisan']
     networks:
-      - internal
+      - web
 
   scheduler:
     image: ${APP_PROJECT}-php-fpm
@@ -100,8 +103,9 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./.docker/database:/var/lib/mysql
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
-      - internal
+      - web
 
   # redis:
   #   container_name: ${APP_PROJECT}-redis
@@ -111,7 +115,7 @@ services:
   #   volumes:
   #     - ./.docker/cache:/data
   #   networks:
-  #     - internal
+  #     - web
 
   # memcached:
   #   container_name: ${APP_PROJECT}-memcached
@@ -119,10 +123,8 @@ services:
   #   ports:
   #     - '${FORWARD_REDIS_PORT:-11211}:11211'
   #   networks:
-  #     - internal
+  #     - web
 
 networks:
   web:
     external: true
-  internal:
-    driver: bridge

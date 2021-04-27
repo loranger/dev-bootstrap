@@ -30,6 +30,7 @@ services:
       - DATABASE_URL=mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:3306/${DATABASE_NAME}?serverVersion=5.7
     volumes:
       - .:/var/www/
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
       - web
     depends_on:
@@ -43,6 +44,7 @@ services:
       build: .docker/php
     volumes:
       - .:/var/www
+    user: "${UID:-1000}:${GID:-1000}"
     entrypoint: ['/var/www/bin/console']
     networks:
       - web
@@ -61,6 +63,7 @@ services:
         - TZ=Europe/Paris
     volumes:
         - ./.docker/database:/var/lib/mysql
+    user: "${UID:-1000}:${GID:-1000}"
     networks:
         - web
 

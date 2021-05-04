@@ -11,8 +11,6 @@ services:
       - ./.docker/config/nginx.conf:/etc/nginx/templates/default.conf.template
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
-    networks:
-      - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
@@ -30,8 +28,6 @@ services:
     volumes:
       - .:/var/www/app/:rw
     user: "${UID:-1000}:${GID:-1000}"
-    networks:
-      - web
 
 # docker-compose run --rm composer require machin/truc
   composer:
@@ -43,8 +39,6 @@ services:
     working_dir: /var/www/app/
     command: -V
     entrypoint: ['/usr/bin/composer']
-    networks:
-      - web
 
 # docker-compose run --rm npm install
   npm:
@@ -57,8 +51,6 @@ services:
     user: "node"
     command: -v
     entrypoint: ['npm']
-    networks:
-      - web
 
 # docker-compose run --rm artisan key:generate
   artisan:
@@ -72,8 +64,6 @@ services:
     user: "1000:1000"
     command: inspire
     entrypoint: ['/var/www/app/artisan']
-    networks:
-      - web
 
   scheduler:
     image: ${APP_PROJECT}-php-fpm
@@ -85,8 +75,6 @@ services:
       - mariadb
     volumes:
       - .:/var/www/app
-    networks:
-      - web
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -103,8 +91,6 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./.docker/database:/var/lib/mysql
-    networks:
-      - web
 
   # redis:
   #   container_name: ${APP_PROJECT}-redis
@@ -113,17 +99,14 @@ services:
   #     - '${FORWARD_REDIS_PORT:-6379}:6379'
   #   volumes:
   #     - ./.docker/cache:/data
-  #   networks:
-  #     - web
 
   # memcached:
   #   container_name: ${APP_PROJECT}-memcached
   #   image: 'memcached:alpine'
   #   ports:
   #     - '${FORWARD_REDIS_PORT:-11211}:11211'
-  #   networks:
-  #     - web
 
 networks:
-  web:
-    external: true
+  default:
+    external:
+      name: web

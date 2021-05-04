@@ -11,8 +11,6 @@ services:
       - ./.docker/nginx/templates:/etc/nginx/templates:cached
       - .:/var/www/app:delegated
       # - ./.docker/logs/nginx:/var/log/nginx
-    networks:
-      - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${PS_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
@@ -30,8 +28,6 @@ services:
       - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
       - ./.docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:cached
     user: "${UID:-1000}:${GID:-1000}"
-    networks:
-      - web
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -49,8 +45,6 @@ services:
     volumes:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
-    networks:
-      - web
 
   adminer:
     container_name: ${APP_PROJECT}-adminer
@@ -60,9 +54,8 @@ services:
         ADMINER_DESIGN: flat
     ports:
       - 8888:8080
-    networks:
-      - web
 
 networks:
-  web:
-    external: true
+  default:
+    external:
+      name: web

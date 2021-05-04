@@ -1,5 +1,7 @@
 version: "3.4"
+
 services:
+
   site:
     build:
       context: .
@@ -10,11 +12,11 @@ services:
       - ./:/app:delegated
     user: "${UID:-1000}:${GID:-1000}"
     command: "php -S 0.0.0.0:80 /app/index.php"
-    networks:
-      - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
+
 networks:
-  web:
-    external: true
+  default:
+    external:
+      name: web

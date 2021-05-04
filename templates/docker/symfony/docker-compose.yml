@@ -11,8 +11,6 @@ services:
       - .:/var/www/app
       - ./.docker/config/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
-    networks:
-      - web
     labels:
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
@@ -31,8 +29,6 @@ services:
     volumes:
       - .:/var/www/
     user: "${UID:-1000}:${GID:-1000}"
-    networks:
-      - web
     depends_on:
         - db
 
@@ -46,8 +42,6 @@ services:
       - .:/var/www
     user: "${UID:-1000}:${GID:-1000}"
     entrypoint: ['/var/www/bin/console']
-    networks:
-      - web
 
   db:
     container_name: ${APP_PROJECT}-db
@@ -63,9 +57,8 @@ services:
         - TZ=Europe/Paris
     volumes:
         - ./.docker/database:/var/lib/mysql
-    networks:
-        - web
 
 networks:
-  web:
-    external: true
+  default:
+    external:
+      name: web

@@ -99,6 +99,18 @@ function init-deployer-for () {
     fi
 }
 
+function init-remote-for () {
+
+    if ! command -v remote &> /dev/null
+    then
+        echo "remote could not be found"
+        echo "please install from https://github.com/loading-sasu/remote"
+        exit
+    else
+        remote init
+    fi
+}
+
 function init-git () {
     # Remove remaining git repositories installed from .dependencies
     find . -type d -mindepth 2 -name .git | xargs rm -rf \{\};
@@ -154,6 +166,11 @@ function init-project ()
     if [[ $reply =~ ^[Yy]$ ]]
     then
         init-deployer-for $type
+    fi
+    read "?Do you need remote? [yN]" reply
+    if [[ $reply =~ ^[Yy]$ ]]
+    then
+        init-remote-for $type
     fi
     init-git
     init-editor

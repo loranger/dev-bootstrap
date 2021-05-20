@@ -61,7 +61,6 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     depends_on:
       - mariadb
-    user: "1000:1000"
     command: inspire
     entrypoint: ['/var/www/app/artisan']
 

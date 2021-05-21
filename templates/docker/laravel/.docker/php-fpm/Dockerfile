@@ -43,3 +43,6 @@ ENV XDG_CONFIG_HOME=/tmp
 #   && rm -rf /var/cache/apk/*
 
 RUN rm -rf /var/cache/apk/*
+
+# Set working directory
+WORKDIR /var/www/app

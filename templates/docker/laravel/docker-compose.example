@@ -12,8 +12,23 @@ services:
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     labels:
-      - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
+      # Simple HTTP traefik support
+      - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
+
+      # # TLS support, http>https redirection middleware, //www.domain>//domain redirection middleware
+      # - "traefik.http.routers.${APP_PROJECT}.entrypoints=http"
+      # - "traefik.http.routers.${APP_PROJECT}.rule=Host(`www.${APP_DOMAIN}`,`${APP_DOMAIN}`)"
+      # - "traefik.http.routers.${APP_PROJECT}.middlewares=redirect-without-www@file,redirect-to-https@file"
+      # - "traefik.http.routers.${APP_PROJECT}-secure.entrypoints=https"
+      # - "traefik.http.routers.${APP_PROJECT}-secure.rule=Host(`www.${APP_DOMAIN}`,`${APP_DOMAIN}`)"
+      # - "traefik.http.routers.${APP_PROJECT}-secure.tls=true"
+      # - "traefik.http.routers.${APP_PROJECT}-secure.tls.certresolver=letsencrypt"
+      # - "traefik.http.routers.${APP_PROJECT}-secure.middlewares=redirect-without-www@file"
+
+      # # Enable https://crazymax.dev/diun/
+      # - "diun.enable=true"
+
     depends_on:
       - php-fpm
 

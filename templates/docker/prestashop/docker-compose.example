@@ -28,6 +28,10 @@ services:
 
       # # Enable https://crazymax.dev/diun/
       # - "diun.enable=true"
+
+      # # Enable https://containrrr.dev/watchtower/
+      # - "com.centurylinklabs.watchtower.enable=true"
+
     depends_on:
       - php-fpm
 

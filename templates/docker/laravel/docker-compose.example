@@ -123,6 +123,18 @@ services:
   #   ports:
   #     - '${FORWARD_REDIS_PORT:-11211}:11211'
 
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   container_name: ${APP_PROJECT}-mailhog
+  #   # ports:
+  #   #   - "8003:1025" # SMTP Port
+  #   #   - "8100:8025" # UI Port
+  #   labels:
+  #     - "traefik.http.routers.mailhog-${APP_PROJECT}.rule=Host(`mailhog.${APP_URL}`)"
+  #     - "traefik.http.services.mailhog-${APP_PROJECT}-service.loadbalancer.server.port=8025"
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #     - "diun.enable=true"
+
 networks:
   default:
     external:

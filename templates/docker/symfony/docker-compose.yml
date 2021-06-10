@@ -9,7 +9,7 @@ services:
       - .env
     volumes:
       - .:/var/www/app
-      - ./.docker/config/nginx.conf:/etc/nginx/templates/default.conf.template
+      - ./.docker/nginx/default.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
       # Simple HTTP traefik support
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"

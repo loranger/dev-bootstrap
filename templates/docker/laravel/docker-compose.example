@@ -2,13 +2,31 @@ version: '3'
 
 services:
 
+  # apache:
+  #   container_name: ${APP_PROJECT}-apache
+  #   image: httpd:2.4
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./.docker/apache/apache.conf:/usr/local/apache2/conf/httpd.conf
+  #     - ./.docker/apache/vhost.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
+  #     - .:/var/www/app
+  #     - ./.docker/logs/apache:/var/log/apache
+  #   labels:
+  #     - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
+  #     - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
+  #     - "com.centurylinklabs.watchtower.enable=true"
+  #     - "diun.enable=true"
+  #   depends_on:
+  #     - php-fpm
+
   nginx:
     container_name: ${APP_PROJECT}-nginx
     image: nginx:stable-alpine
     env_file:
       - .env
     volumes:
-      - ./.docker/config/nginx.conf:/etc/nginx/templates/default.conf.template
+      - ./.docker/nginx/nginx.conf:/etc/nginx/templates/default.conf.template
       - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     labels:

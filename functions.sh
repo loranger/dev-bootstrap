@@ -52,7 +52,7 @@ function init-docker-for () {
     fi
 
     if [ -z ${projectname} ]; then
-        projectname=$(basename `pwd`)
+        projectname=$(basename "`pwd`")
     fi
 
     for envfile in .env .env.example

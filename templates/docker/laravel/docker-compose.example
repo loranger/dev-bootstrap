@@ -155,5 +155,4 @@ services:
 
 networks:
   default:
-    external:
       name: web

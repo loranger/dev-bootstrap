@@ -11,6 +11,7 @@ RUN apk add --update --no-cache \
     jpeg-dev \
     libjpeg-turbo-dev \
     libjpeg-turbo \
+    libmcrypt \
     libmemcached-dev \
     libpng-dev \
     libtool \
@@ -28,9 +29,10 @@ RUN apk add --update --no-cache \
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 RUN docker-php-ext-install bcmath gd iconv intl mbstring mysqli pdo pdo_mysql soap zip
 
-RUN  pecl install imagick memcached \
+RUN  pecl install imagick memcached mcrypt-1.0.1\
     && docker-php-ext-enable imagick \
-    && docker-php-ext-enable memcached
+    && docker-php-ext-enable memcached \
+    && docker-php-ext-enable mcrypt
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

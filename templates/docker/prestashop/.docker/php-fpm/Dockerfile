@@ -11,7 +11,7 @@ RUN apk add --update --no-cache \
     jpeg-dev \
     libjpeg-turbo-dev \
     libjpeg-turbo \
-    libmcrypt \
+    libmcrypt-dev \
     libmemcached-dev \
     libpng-dev \
     libtool \

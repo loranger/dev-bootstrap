@@ -45,6 +45,7 @@ services:
       - .:/var/www/app/:delegated
       - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
       - ./.docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:cached
+      - ./.docker/php-fpm/prepend.php:/var/share/update_ps_domains.php
     user: "${UID:-1000}:${GID:-1000}"
 
   mariadb:
@@ -63,6 +64,19 @@ services:
     volumes:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
+
+  # console:
+  #   image: ${APP_PROJECT}-php-fpm
+  #   container_name: ${APP_PROJECT}-console
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - .:/var/www/app/
+  #   user: "${UID:-1000}:${GID:-1000}"
+  #   depends_on:
+  #     - ${APP_PROJECT}-mariadb
+  #   command: --version
+  #   entrypoint: ['/var/www/app/prestashopConsole.phar']
 
   adminer:
     container_name: ${APP_PROJECT}-adminer

@@ -102,14 +102,13 @@ services:
 
   scheduler:
     image: ${APP_PROJECT}-php-fpm
-    command: /usr/bin/run-scheduler
+    command: ["/usr/sbin/crond", "-f", "-l", "2"]
     container_name: ${APP_PROJECT}-scheduler
-    restart: unless-stopped
-    working_dir: /var/www/app/
-    depends_on:
-      - mariadb
     volumes:
       - .:/var/www/app
+    restart: unless-stopped
+    depends_on:
+      - mariadb
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb

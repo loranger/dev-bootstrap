@@ -32,8 +32,11 @@ RUN apk add mysql-client
 # Install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Enable schedule task runner
-COPY .docker/php-fpm/run-scheduler.sh /usr/bin/run-scheduler
+# Enable schedule task runner with cron daemon
+RUN apk add --no-cache su-exec
+RUN echo "* * * * * su-exec www-data php /var/www/app/artisan schedule:run > /proc/1/fd/1 2>/proc/1/fd/2" > /tmp/crontab && \
+    crontab /tmp/crontab && \
+    rm /tmp/crontab
 
 # Enable tinker local permissions
 ENV XDG_CONFIG_HOME=/tmp

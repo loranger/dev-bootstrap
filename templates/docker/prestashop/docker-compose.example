@@ -47,6 +47,8 @@ services:
       - ./.docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:cached
       - ./.docker/php-fpm/prepend.php:/var/share/update_ps_domains.php
     user: "${UID:-1000}:${GID:-1000}"
+    labels:
+      - "traefik.enable=false"
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -64,6 +66,8 @@ services:
     volumes:
       - ./.docker/database:/var/lib/mysql:delegated
       # - ../path/to/initial_dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    labels:
+      - "traefik.enable=false"
 
   # console:
   #   image: ${APP_PROJECT}-php-fpm
@@ -84,8 +88,12 @@ services:
     environment:
         ADMINER_DEFAULT_SERVER: ${DB_SERVER}
         ADMINER_DESIGN: flat
-    ports:
-      - 8888:8080
+    # ports:
+    #   - 8888:8080
+    labels:
+      # Simple HTTP traefik support
+      - "traefik.http.routers.${APP_PROJECT}.rule=Host(`adminer.${PS_DOMAIN}`)"
+      - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=8080"
 
 networks:
   default:

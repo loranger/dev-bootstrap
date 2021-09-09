@@ -64,6 +64,8 @@ services:
     volumes:
       - .:/var/www/app/:rw
     user: "${UID:-1000}:${GID:-1000}"
+    labels:
+      - "traefik.enable=false"
 
 # docker-compose run --rm composer require machin/truc
   composer:
@@ -109,6 +111,8 @@ services:
     restart: unless-stopped
     depends_on:
       - mariadb
+    labels:
+      - "traefik.enable=false"
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -125,6 +129,8 @@ services:
       - TZ=Europe/Paris
     volumes:
       - ./.docker/database:/var/lib/mysql
+    labels:
+      - "traefik.enable=false"
 
   # redis:
   #   container_name: ${APP_PROJECT}-redis
@@ -133,12 +139,16 @@ services:
   #     - '${FORWARD_REDIS_PORT:-6379}:6379'
   #   volumes:
   #     - ./.docker/cache:/data
+    # labels:
+    #   - "traefik.enable=false"
 
   # memcached:
   #   container_name: ${APP_PROJECT}-memcached
   #   image: 'memcached:alpine'
   #   ports:
   #     - '${FORWARD_REDIS_PORT:-11211}:11211'
+    # labels:
+    #   - "traefik.enable=false"
 
   # mailhog:
   #   image: mailhog/mailhog:latest

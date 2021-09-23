@@ -82,18 +82,18 @@ services:
   #   command: --version
   #   entrypoint: ['/var/www/app/prestashopConsole.phar']
 
-  adminer:
-    container_name: ${APP_PROJECT}-adminer
-    image: adminer:latest
-    environment:
-        ADMINER_DEFAULT_SERVER: ${DB_SERVER}
-        ADMINER_DESIGN: flat
-    # ports:
-    #   - 8888:8080
-    labels:
-      # Simple HTTP traefik support
-      - "traefik.http.routers.${APP_PROJECT}.rule=Host(`adminer.${PS_DOMAIN}`)"
-      - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=8080"
+  # adminer:
+  #   container_name: ${APP_PROJECT}-adminer
+  #   image: adminer:latest
+  #   environment:
+  #       ADMINER_DEFAULT_SERVER: ${DB_SERVER}
+  #       ADMINER_DESIGN: flat
+  #   # ports:
+  #   #   - 8888:8080
+  #   labels:
+  #     # Simple HTTP traefik support
+  #     - "traefik.http.routers.${APP_PROJECT}-adminer.rule=Host(`adminer.${PS_DOMAIN}`)"
+  #     - "traefik.http.services.${APP_PROJECT}-adminer-service.loadbalancer.server.port=8080"
 
 networks:
   default:

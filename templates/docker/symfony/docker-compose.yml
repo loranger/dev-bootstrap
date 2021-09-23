@@ -74,6 +74,20 @@ services:
     volumes:
         - ./.docker/database:/var/lib/mysql
 
+  # adminer:
+  #   container_name: ${APP_PROJECT}-adminer
+  #   image: adminer:latest
+  #   environment:
+  #       ADMINER_DEFAULT_SERVER: ${APP_PROJECT}-db
+  #       ADMINER_DESIGN: flat
+  #   # ports:
+  #   #   - 8888:8080
+  #   labels:
+  #     # Simple HTTP traefik support
+  #     - "traefik.http.routers.${APP_PROJECT}-adminer.rule=Host(`adminer.${APP_DOMAIN}`)"
+  #     - "traefik.http.services.${APP_PROJECT}-adminer-service.loadbalancer.server.port=8080"
+
+
 networks:
   default:
       name: web

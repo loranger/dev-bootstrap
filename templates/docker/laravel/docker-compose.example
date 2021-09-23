@@ -13,7 +13,7 @@ services:
   #     - .:/var/www/app
   #     - ./.docker/logs/apache:/var/log/apache
   #   labels:
-  #     - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_URL}`)"
+  #     - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"
   #     - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
   #     - "com.centurylinklabs.watchtower.enable=true"
   #     - "diun.enable=true"
@@ -157,10 +157,23 @@ services:
   #   #   - "8003:1025" # SMTP Port
   #   #   - "8100:8025" # UI Port
   #   labels:
-  #     - "traefik.http.routers.mailhog-${APP_PROJECT}.rule=Host(`mailhog.${APP_URL}`)"
+  #     - "traefik.http.routers.mailhog-${APP_PROJECT}.rule=Host(`mailhog.${APP_DOMAIN}`)"
   #     - "traefik.http.services.mailhog-${APP_PROJECT}-service.loadbalancer.server.port=8025"
   #     - "com.centurylinklabs.watchtower.enable=true"
   #     - "diun.enable=true"
+
+  # adminer:
+  #   container_name: ${APP_PROJECT}-adminer
+  #   image: adminer:latest
+  #   environment:
+  #       ADMINER_DEFAULT_SERVER: ${DB_HOST}
+  #       ADMINER_DESIGN: flat
+  #   # ports:
+  #   #   - 8888:8080
+  #   labels:
+  #     # Simple HTTP traefik support
+  #     - "traefik.http.routers.${APP_PROJECT}-adminer.rule=Host(`adminer.${APP_DOMAIN}`)"
+  #     - "traefik.http.services.${APP_PROJECT}-adminer-service.loadbalancer.server.port=8080"
 
 networks:
   default:

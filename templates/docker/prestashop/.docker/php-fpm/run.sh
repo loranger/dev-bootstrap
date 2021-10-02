@@ -2,10 +2,10 @@
 
 if [ "${DISABLE_MAKE}" != "1" ]; then
   echo "* Running composer ...";
-  su - www-data -s /bin/bash -c '/usr/local/bin/composer install --no-interaction'
+  /usr/local/bin/composer install --no-interaction
 
   echo "* Build assets ...";
-  su - www-data -s /bin/bash -c '/usr/bin/make assets'
+  /usr/bin/make assets
 fi
 
 if [ "$DB_SERVER" = "<to be defined>" -a $PS_INSTALL_AUTO = 1 ]; then
@@ -38,12 +38,12 @@ if [ ! -f /var/www/app/config/settings.inc.php ]; then
 
             latest=$(curl -s https://api.github.com/repos/prestashop/prestashop/releases/latest | grep "browser_download_url.*zip" | cut -d '"' -f 4)
             curl -s -L -o /var/www/app/latest.zip "$latest"
-            su - www-data -s /bin/bash -c '/usr/bin/unzip -qq -o /var/www/app/latest.zip -d /var/www/app/'
+            /usr/bin/unzip -qq -o /var/www/app/latest.zip -d /var/www/app/
             rm -f /var/www/app/latest.zip
 
             echo "* Expanding PrestaShop, this may take a while ...";
 
-            su - www-data -s /bin/bash -c '/usr/bin/unzip -qq -o /var/www/app/prestashop.zip -d /var/www/app/'
+            /usr/bin/unzip -qq -o /var/www/app/prestashop.zip -d /var/www/app/
         fi
 
         echo "* Installing PrestaShop, this may take a while ...";
@@ -69,11 +69,11 @@ if [ ! -f /var/www/app/config/settings.inc.php ]; then
 
         if [ -f /var/www/app/$PS_FOLDER_INSTALL/index_cli.php ]; then
             echo "* Launching the installer script..."
-            su - www-data -s /bin/bash -c "/usr/local/bin/php /var/www/app/$PS_FOLDER_INSTALL/index_cli.php \
-            --domain=\"$PS_DOMAIN\" --db_server=$DB_SERVER:$DB_PORT --db_name=\"$DB_NAME\" --db_user=$DB_USER \
-            --db_password=$DB_PASSWD --prefix=\"$DB_PREFIX\" --firstname=\"$ADMIN_FIRSTNAME\" --lastname=\"$ADMIN_LASTNAME\" \
-            --password=$ADMIN_PASSWD --email=\"$ADMIN_MAIL\" --language=$PS_LANGUAGE --country=$PS_COUNTRY \
-            --all_languages=$PS_ALL_LANGUAGES --newsletter=0 --send_email=0 --ssl=$PS_ENABLE_SSL"
+            /usr/local/bin/php /var/www/app/$PS_FOLDER_INSTALL/index_cli.php \
+            --domain=$PS_DOMAIN --db_server=$DB_SERVER:$DB_PORT --db_name=$DB_NAME --db_user=$DB_USER \
+            --db_password=$DB_PASSWD --prefix=$DB_PREFIX --firstname=$ADMIN_FIRSTNAME --lastname=$ADMIN_LASTNAME \
+            --password=$ADMIN_PASSWD --email=$ADMIN_MAIL --language=$PS_LANGUAGE --country=$PS_COUNTRY \
+            --all_languages=$PS_ALL_LANGUAGES --newsletter=0 --send_email=0 --ssl=$PS_ENABLE_SSL
 
             mv /var/www/app/admin /var/www/app/$PS_FOLDER_ADMIN
             rm -rf /var/www/app/PS_FOLDER_INSTALL

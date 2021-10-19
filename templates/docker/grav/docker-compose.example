@@ -107,12 +107,10 @@ services:
     entrypoint: ['bin/plugin']
 
 # custom working_dir may be required
+# custom working_dir may be required
   npm:
+    image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    image: ${APP_PROJECT}-npm
-    build:
-      context: .
-      dockerfile: ./.docker/node/Dockerfile
     volumes:
       - .:/var/www/app/
     user: "${UID:-1000}:${GID:-1000}"

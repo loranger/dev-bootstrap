@@ -7,15 +7,15 @@ services:
     image: nginx:stable-alpine
     env_file:
       - .env
+    volumes_from:
+      - php-fpm
     volumes:
       - ./.docker/nginx/templates:/etc/nginx/templates:cached
-      - .:/var/www/app:delegated
       # - ./.docker/logs/nginx:/var/log/nginx
     labels:
       # Simple HTTP traefik support
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${PS_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
-
       # # TLS support, http>https redirection middleware, //www.domain>//domain redirection middleware
       # - "traefik.http.routers.${APP_PROJECT}.entrypoints=http"
       # - "traefik.http.routers.${APP_PROJECT}.rule=Host(`www.${PS_DOMAIN}`,`${PS_DOMAIN}`)"
@@ -25,13 +25,10 @@ services:
       # - "traefik.http.routers.${APP_PROJECT}-secure.tls=true"
       # - "traefik.http.routers.${APP_PROJECT}-secure.tls.certresolver=letsencrypt"
       # - "traefik.http.routers.${APP_PROJECT}-secure.middlewares=redirect-without-www@file"
-
       # # Enable https://crazymax.dev/diun/
       # - "diun.enable=true"
-
       # # Enable https://containrrr.dev/watchtower/
       # - "com.centurylinklabs.watchtower.enable=true"
-
     depends_on:
       - php-fpm
 
@@ -74,8 +71,9 @@ services:
   #   container_name: ${APP_PROJECT}-console
   #   env_file:
   #     - .env
+  #   volumes_from:
+  #     - php-fpm
   #   volumes:
-  #     - .:/var/www/app/
   #   user: "${UID:-1000}:${GID:-1000}"
   #   depends_on:
   #     - ${APP_PROJECT}-mariadb

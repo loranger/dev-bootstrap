@@ -6,15 +6,15 @@ services:
     image: nginx:stable-alpine
     env_file:
       - .env
+    volumes_from:
+      - php-fpm
     volumes:
       - ./.docker/nginx/nginx.conf:/etc/nginx/templates/default.conf.template
-      - .:/var/www/app
       - ./.docker/logs/nginx:/var/log/nginx
     labels:
       # Simple HTTP traefik support
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
-
       # # TLS support, http>https redirection middleware, //www.domain>//domain redirection middleware
       # - "traefik.http.routers.${APP_PROJECT}.entrypoints=http"
       # - "traefik.http.routers.${APP_PROJECT}.rule=Host(`www.${APP_DOMAIN}`,`${APP_DOMAIN}`)"
@@ -24,10 +24,8 @@ services:
       # - "traefik.http.routers.${APP_PROJECT}-secure.tls=true"
       # - "traefik.http.routers.${APP_PROJECT}-secure.tls.certresolver=letsencrypt"
       # - "traefik.http.routers.${APP_PROJECT}-secure.middlewares=redirect-without-www@file"
-
       # # Enable https://crazymax.dev/diun/
       # - "diun.enable=true"
-
       # # Enable https://containrrr.dev/watchtower/
       # - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
@@ -51,8 +49,8 @@ services:
   composer:
     image: ${APP_PROJECT}-php-fpm
     container_name: ${APP_PROJECT}-composer
-    volumes:
-      - .:/var/www/app
+    volumes_from:
+      - php-fpm
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
@@ -67,8 +65,8 @@ services:
       dockerfile: ./.docker/php-cli/Dockerfile
     env_file:
       - .env
-    volumes:
-      - .:/var/www/app/:rw
+    volumes_from:
+      - php-fpm
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
@@ -83,8 +81,8 @@ services:
       dockerfile: ./.docker/php-cli/Dockerfile
     env_file:
       - .env
-    volumes:
-      - .:/var/www/app/:rw
+    volumes_from:
+      - php-fpm
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
@@ -99,8 +97,8 @@ services:
       dockerfile: ./.docker/php-cli/Dockerfile
     env_file:
       - .env
-    volumes:
-      - .:/var/www/app/:rw
+    volumes_from:
+      - php-fpm
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: login -V
@@ -111,8 +109,8 @@ services:
   npm:
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    volumes:
-      - .:/var/www/app/
+    volumes_from:
+      - php-fpm
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/user/themes/quark
     user: "node"

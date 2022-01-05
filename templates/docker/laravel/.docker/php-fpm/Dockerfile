@@ -6,7 +6,7 @@ RUN apk add --update --no-cache \
 
 # Enable PHP extensions
 # ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
-RUN docker-php-ext-install bcmath gd zip pdo pdo_mysql intl
+RUN docker-php-ext-install bcmath gd zip pdo pdo_mysql intl exif
 
 # Handle locales
 ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl

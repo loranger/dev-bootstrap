@@ -36,6 +36,10 @@ RUN  pecl install imagick memcached mcrypt-1.0.1\
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Enable writable composer cache
+RUN mkdir -p /.cache/composer && chmod 777 /.cache/composer
+
+
 RUN groupmod -g 1000 www-data \
   && usermod -u 1000 -g 1000 www-data
 

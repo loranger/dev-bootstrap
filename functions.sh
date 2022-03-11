@@ -90,7 +90,7 @@ function init-docker-for () {
             setVar $envfile 'APP_NAME' "\"$projectname\""
             setVar $envfile 'APP_PROJECT' `slugify $projectname` 'APP_NAME'
             setVar $envfile 'APP_URL' '"http:\/\/${APP_DOMAIN}"'
-            setVar $envfile 'APP_DOMAIN' 'project.docker' 'APP_PROJECT'
+            setVar $envfile 'APP_DOMAIN' "`slugify $projectname`.docker" 'APP_PROJECT'
 
             setVar $envfile 'DB_HOST' '"${APP_PROJECT}-mariadb"'
             setVar $envfile 'DB_DATABASE' `slugify $projectname`

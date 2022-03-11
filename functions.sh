@@ -6,6 +6,35 @@ default_project_path="~/Developer/projects"
 template_path="$(dirname $0)/templates"
 
 
+# replaceInFile(File, From, To)
+function replaceInFile() {
+    FILE=$1
+    FROM=$2
+    TO=$3
+    sed -i.tmp -e "s/$FROM/$TO/g" $FILE
+    rm -f $FILE.tmp
+}
+
+# setVar(File, Variable, Value, After?)
+function setVar() {
+    FILE=$1
+    VARIABLE=$2
+    VALUE=$3
+    AFTER=${4}
+
+    if grep -q "${VARIABLE}=" $FILE; then # Replace value
+        sed -i.tmp -e "s/$VARIABLE=.*/$VARIABLE=$VALUE/g" $FILE
+    else # Append variable
+        if [ -z "$AFTER" ]; then # to last line
+            echo "$VARIABLE=$VALUE" >> $FILE
+        else # after $AFTER
+            sed -i.tmp -e "/^$AFTER=.*/a\\
+$VARIABLE=$VALUE" $FILE
+        fi
+    fi
+    rm -f $FILE.tmp
+}
+
 function slugify () {
     echo "$1" | iconv -t ascii//TRANSLIT | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-+|-+$//g' | tr A-Z a-z
 }
@@ -58,18 +87,29 @@ function init-docker-for () {
     for envfile in .env .env.example
     do
         if [ -f $envfile ]; then
-            sed -i.tmp -e "s/APP_NAME=.*/APP_NAME=\"$projectname\"/g" $envfile
-            sed -i.tmp -e "s/APP_URL=.*/APP_URL=`slugify $projectname`.docker/g" $envfile
-            sed -i.tmp -e "s/DB_DATABASE=.*/DB_DATABASE=`slugify $projectname`/g" $envfile
-            if grep -q "APP_PROJECT=" $envfile; then
-                sed -i.tmp -e "s/project/`slugify $projectname`/g" $envfile
-            else
-                sed -i.tmp -e "/^APP_URL=.*/a\\
-APP_PROJECT=`slugify $projectname`" $envfile
-            fi
-            rm -f $envfile.tmp
+            setVar $envfile 'APP_NAME' "\"$projectname\""
+            setVar $envfile 'APP_PROJECT' `slugify $projectname` 'APP_NAME'
+            setVar $envfile 'APP_URL' '"http:\/\/${APP_DOMAIN}"'
+            setVar $envfile 'APP_DOMAIN' 'project.docker' 'APP_PROJECT'
+
+            setVar $envfile 'DB_HOST' '"${APP_PROJECT}-mariadb"'
+            setVar $envfile 'DB_DATABASE' `slugify $projectname`
+            setVar $envfile 'DB_USERNAME' 'app_user'
+            setVar $envfile 'DB_PASSWORD' 'secret'
+
+            setVar $envfile 'MEMCACHED_HOST' '"${APP_PROJECT}-memcached"'
+
+            setVar $envfile 'REDIS_HOST' '"${APP_PROJECT}-redis"'
+
+            setVar $envfile 'MAIL_HOST' '"${APP_PROJECT}-maildev"'
+            setVar $envfile 'MAIL_FROM_ADDRESS' '"mailer@${APP_DOMAIN}"'
         fi
     done
+
+    if [ ! -f docker-compose.yaml -a ! -f docker-compose.yml ]; then
+        cp docker-compose.example docker-compose.yml
+    fi
+
 }
 
 function init-deployer-for () {

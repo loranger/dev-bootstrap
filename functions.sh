@@ -1,8 +1,11 @@
 #!/usr/bin/env sh
 
-# editor="subl"
 editor=$VISUAL
-default_project_path="~/Developer/projects"
+default_project_path="~/Projects"
+
+if [ -f ~/.dev-bootstrap.conf ]; then
+    source ~/.dev-bootstrap.conf
+fi
 
 template_path="$(dirname $0)/templates"
 

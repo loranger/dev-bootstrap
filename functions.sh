@@ -110,6 +110,8 @@ function init-docker-for () {
         cp docker-compose.example docker-compose.yml
     fi
 
+    replaceInFile README.md 'project' `slugify $projectname`
+
 }
 
 function init-deployer-for () {

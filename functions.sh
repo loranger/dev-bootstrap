@@ -178,7 +178,9 @@ function init-git () {
 }
 
 function init-editor () {
-    `$editor . &`
+    if [ ! -z "$editor" ]; then
+        `$editor . &`
+    fi
 }
 
 function init-project ()

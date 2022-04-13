@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
 
-editor="subl"
+# editor="subl"
+editor=$VISUAL
 default_project_path="~/Developer/projects"
 
 template_path="$(dirname $0)/templates"

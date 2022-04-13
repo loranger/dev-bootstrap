@@ -24,6 +24,11 @@
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  */
 
+// Bypass for admin folder
+if (preg_match("/".$_SERVER['PS_FOLDER_ADMIN']."/iU", $_SERVER['DOCUMENT_URI'])) {
+    return;
+}
+
 // Workaround for redirection on init
 $_POST['id_shop'] = 1;
 

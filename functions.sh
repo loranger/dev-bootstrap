@@ -110,6 +110,10 @@ function init-docker-for () {
         fi
     done
 
+    if [ ! -f .env ]; then
+        cp .env.example .env
+    fi
+
     if [ ! -f docker-compose.yaml -a ! -f docker-compose.yml ]; then
         cp docker-compose.example docker-compose.yml
     fi

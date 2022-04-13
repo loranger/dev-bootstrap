@@ -77,7 +77,9 @@ if [ ! -f /var/www/app/config/settings.inc.php ]; then
 
             mv /var/www/app/admin /var/www/app/$PS_FOLDER_ADMIN
             rm -rf /var/www/app/PS_FOLDER_INSTALL
-            rm /var/www/app/prestashop.zip
+            if [ -f /var/www/app/prestashop.zip ]; then
+                rm /var/www/app/prestashop.zip
+            fi
         else
             echo "Installer script is missing, cannot install"
         fi

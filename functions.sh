@@ -178,7 +178,7 @@ function init-git () {
 }
 
 function init-editor () {
-    `$editor .`
+    `$editor . &`
 }
 
 function init-project ()

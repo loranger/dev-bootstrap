@@ -76,9 +76,9 @@ if [ ! -f /var/www/app/config/settings.inc.php ]; then
             --all_languages=$PS_ALL_LANGUAGES --newsletter=0 --send_email=0 --ssl=$PS_ENABLE_SSL
 
             mv /var/www/app/admin /var/www/app/$PS_FOLDER_ADMIN
-            rm -rf /var/www/app/PS_FOLDER_INSTALL
+            rm -rf /var/www/app/$PS_FOLDER_INSTALL
             if [ -f /var/www/app/prestashop.zip ]; then
-                rm /var/www/app/prestashop.zip
+                rm /var/www/app/prestashop.zip 2> /dev/null
             fi
         else
             echo "Installer script is missing, cannot install"

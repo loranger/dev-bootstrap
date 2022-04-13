@@ -15,4 +15,4 @@ cd `slugify $1`
 echo "Expanding PrestaShop, this may take a while ...";
 
 unzip -qq -o prestashop.zip -d .
-rm -f prestashop.zip
+rm -f prestashop.zip 2> /dev/null

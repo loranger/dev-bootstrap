@@ -110,7 +110,7 @@ function init-docker-for () {
         cp docker-compose.example docker-compose.yml
     fi
 
-    if [ ! -f README.md ]; then
+    if [ -f README.md ]; then
         replaceInFile README.md 'project' `slugify $projectname`
     fi
 

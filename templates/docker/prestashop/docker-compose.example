@@ -32,7 +32,7 @@ services:
     depends_on:
       - php-fpm
 
-  php-fpm:
+  php-fpm: &php-fpm
     container_name: ${APP_PROJECT}-php-fpm
     image: ${APP_PROJECT}-php-fpm
     build: .docker/php-fpm/
@@ -46,6 +46,26 @@ services:
     user: "${UID:-1000}:${GID:-1000}"
     labels:
       - "traefik.enable=false"
+
+# docker-compose run --rm composer require machin/truc
+  composer:
+    <<: *php-fpm
+    container_name: ${APP_PROJECT}-composer
+    working_dir: /var/www/app/
+    command: -V
+    entrypoint: ['/usr/bin/composer']
+
+# docker-compose run --rm npm install
+  npm:
+    image: node:alpine
+    container_name: ${APP_PROJECT}-npm
+    volumes_from:
+      - php-fpm
+    user: "${UID:-1000}:${GID:-1000}"
+    working_dir: /var/www/app/
+    user: "node"
+    command: -v
+    entrypoint: ['npm']
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb
@@ -79,6 +99,30 @@ services:
   #     - ${APP_PROJECT}-mariadb
   #   command: --version
   #   entrypoint: ['/var/www/app/prestashopConsole.phar']
+
+  memcached:
+    container_name: ${APP_PROJECT}-memcached
+    image: 'memcached:alpine'
+    ports:
+      - '${FORWARD_REDIS_PORT:-11211}:11211'
+    profiles:
+      - memcached
+    labels:
+      - "traefik.enable=false"
+
+  maildev:
+    image: djfarrelly/maildev
+    container_name: ${APP_PROJECT}-maildev
+    # ports:
+    #   - "1025:25"
+    #   - "1080:80"
+    profiles:
+      - mail
+    labels:
+      - "traefik.http.routers.maildev-${APP_PROJECT}.rule=Host(`maildev.${PS_DOMAIN}`)"
+      - "traefik.http.services.maildev-${APP_PROJECT}-service.loadbalancer.server.port=80"
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "diun.enable=true"
 
   adminer:
     container_name: ${APP_PROJECT}-adminer

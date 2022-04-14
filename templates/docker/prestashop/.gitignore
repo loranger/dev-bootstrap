@@ -15,8 +15,10 @@ docker-compose.yaml
 
 /admin*/autoupgrade/
 /cache/
+var/cache/
 /config/xml/*.xml
 /log/
+var/logs/
 *sitemap.xml
 /themes/*/cache/
 /modules/*/config*.xml

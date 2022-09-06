@@ -12,6 +12,7 @@ services:
       - ./:/app:delegated
     user: "${UID:-1000}:${GID:-1000}"
     command: "php -S 0.0.0.0:80 /app/index.php"
+    labels:
       # Simple HTTP traefik support
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"

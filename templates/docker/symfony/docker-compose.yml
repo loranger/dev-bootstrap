@@ -7,9 +7,8 @@ services:
     image: nginx:stable-alpine
     env_file:
       - .env
-    volumes_from:
-      - php-fpm
     volumes:
+      - .:/var/www/
       - ./.docker/nginx/default.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
       # Simple HTTP traefik support
@@ -52,8 +51,8 @@ services:
     build:
       context: .
       build: .docker/php
-    volumes_from:
-      - php-fpm
+    volumes:
+      - .:/var/www/
     user: "${UID:-1000}:${GID:-1000}"
     entrypoint: ['/var/www/bin/console']
 

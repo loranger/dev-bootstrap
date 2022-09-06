@@ -7,9 +7,8 @@ services:
   #   image: httpd:2.4
   #   env_file:
   #     - .env
-  #   volumes_from:
-  #     - php-fpm
   #   volumes:
+  #     - .:/var/www/app/:rw
   #     - ./.docker/apache/apache.conf:/usr/local/apache2/conf/httpd.conf
   #     - ./.docker/apache/vhost.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
   #     - ./.docker/logs/apache:/var/log/apache
@@ -26,9 +25,8 @@ services:
     image: nginx:stable-alpine
     env_file:
       - .env
-    volumes_from:
-      - php-fpm
     volumes:
+      - .:/var/www/app/:rw
       - ./.docker/nginx/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
     labels:
@@ -115,8 +113,8 @@ services:
   npm:
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    volumes_from:
-      - php-fpm
+    volumes:
+      - .:/var/www/app/:rw
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
@@ -176,13 +174,14 @@ services:
   #     - "diun.enable=true"
 
   maildev:
-    image: djfarrelly/maildev
+    image: maildev/maildev
     container_name: ${APP_PROJECT}-maildev
     # ports:
     #   - "1025:25"
     #   - "1080:80"
-    profiles:
-      - mail
+    environment:
+      MAILDEV_SMTP_PORT: 25
+      MAILDEV_WEB_PORT: 80
     labels:
       - "traefik.http.routers.maildev-${APP_PROJECT}.rule=Host(`maildev.${APP_DOMAIN}`)"
       - "traefik.http.services.maildev-${APP_PROJECT}-service.loadbalancer.server.port=80"

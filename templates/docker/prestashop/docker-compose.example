@@ -7,9 +7,8 @@ services:
     image: nginx:stable-alpine
     env_file:
       - .env
-    volumes_from:
-      - php-fpm
     volumes:
+      - .:/var/www/app/:delegated
       - ./.docker/nginx/templates:/etc/nginx/templates:cached
       # - ./.docker/logs/nginx:/var/log/nginx
     labels:
@@ -59,8 +58,8 @@ services:
   npm:
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    volumes_from:
-      - php-fpm
+    volumes:
+      - .:/var/www/app/:delegated
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
@@ -94,7 +93,8 @@ services:
   #   volumes_from:
   #     - php-fpm
   #   volumes:
-  #   user: "${UID:-1000}:${GID:-1000}"
+  #     - .:/var/www/app/:delegated
+  #     - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini:cached
   #   depends_on:
   #     - ${APP_PROJECT}-mariadb
   #   command: --version

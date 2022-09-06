@@ -6,9 +6,8 @@ services:
     image: nginx:stable-alpine
     env_file:
       - .env
-    volumes_from:
-      - php-fpm
     volumes:
+      - .:/var/www/app/:rw
       - ./.docker/nginx/nginx.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
     labels:
@@ -31,12 +30,12 @@ services:
     depends_on:
       - php-fpm
 
-  php-fpm:
+  php-fpm: &php-fpm
     container_name: ${APP_PROJECT}-php-fpm
     image: ${APP_PROJECT}-php-fpm
     build:
       context: .
-      dockerfile: ./.docker/php-fpm/Dockerfile
+      dockerfile: .docker/php-fpm/Dockerfile
     env_file:
       - .env
     volumes:
@@ -47,70 +46,42 @@ services:
 
 # docker-compose run --rm composer require machin/truc
   composer:
-    image: ${APP_PROJECT}-php-fpm
+    <<: *php-fpm
     container_name: ${APP_PROJECT}-composer
-    volumes_from:
-      - php-fpm
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
     entrypoint: ['/usr/bin/composer']
 
 # docker-compose run --rm grav install
   grav:
+    <<: *php-fpm
     container_name: ${APP_PROJECT}-grav
-    image: ${APP_PROJECT}-grav
-    build:
-      context: .
-      dockerfile: ./.docker/php-cli/Dockerfile
-    env_file:
-      - .env
-    volumes_from:
-      - php-fpm
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
     entrypoint: ['bin/grav']
 
 # docker-compose run --rm gpm install admin
   gpm:
+    <<: *php-fpm
     container_name: ${APP_PROJECT}-gpm
-    image: ${APP_PROJECT}-gpm
-    build:
-      context: .
-      dockerfile: ./.docker/php-cli/Dockerfile
-    env_file:
-      - .env
-    volumes_from:
-      - php-fpm
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: -V
     entrypoint: ['bin/gpm']
 
 # docker-compose run --rm plugin
   plugin:
+    <<: *php-fpm
     container_name: ${APP_PROJECT}-plugin
-    image: ${APP_PROJECT}-plugin
-    build:
-      context: .
-      dockerfile: ./.docker/php-cli/Dockerfile
-    env_file:
-      - .env
-    volumes_from:
-      - php-fpm
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     command: login -V
     entrypoint: ['bin/plugin']
 
-# custom working_dir may be required
-# custom working_dir may be required
+# docker-compose run --rm npm install
   npm:
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    volumes_from:
-      - php-fpm
+    volumes:
+      - .:/var/www/app/:rw
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/user/themes/quark
     user: "node"

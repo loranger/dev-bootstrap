@@ -32,6 +32,7 @@ services:
 
   php-fpm: &php-fpm
     container_name: ${APP_PROJECT}-php-fpm
+    hostname: ${APP_PROJECT}-php-fpm
     image: ${APP_PROJECT}-php-fpm
     build:
       context: .

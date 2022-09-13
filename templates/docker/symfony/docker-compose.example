@@ -2,33 +2,15 @@ version: '3'
 
 services:
 
-  # apache:
-  #   container_name: ${APP_PROJECT}-apache
-  #   image: httpd:2.4
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - .:/var/www/app/:rw
-  #     - ./.docker/apache/apache.conf:/usr/local/apache2/conf/httpd.conf
-  #     - ./.docker/apache/vhost.conf:/usr/local/apache2/conf/extra/httpd-vhosts.conf
-  #     - ./.docker/logs/apache:/var/log/apache
-  #   labels:
-  #     - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"
-  #     - "traefik.http.services.${APP_PROJECT}-service.loadbalancer.server.port=80"
-  #     - "com.centurylinklabs.watchtower.enable=true"
-  #     - "diun.enable=true"
-  #   depends_on:
-  #     - php-fpm
-
   nginx:
     container_name: ${APP_PROJECT}-nginx
     image: nginx:stable-alpine
     env_file:
       - .env
     volumes:
-      - .:/var/www/app/:rw
-      - ./.docker/nginx/nginx.conf:/etc/nginx/templates/default.conf.template
+      - ./.docker/nginx/default.conf:/etc/nginx/templates/default.conf.template
       - ./.docker/logs/nginx:/var/log/nginx
+      - .:/var/www/app/
     labels:
       # Simple HTTP traefik support
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"
@@ -57,29 +39,15 @@ services:
       dockerfile: .docker/php-fpm/Dockerfile
     env_file:
       - .env
-    volumes:
-      - .:/var/www/app/:rw
-    user: "${UID:-1000}:${GID:-1000}"
-    labels:
-      - "traefik.enable=false"
-
-  mariadb:
-    container_name: ${APP_PROJECT}-mariadb
-    image: mariadb:latest
-    # ports:
-    #   - "${FORWARD_DB_PORT:-3306}:3306"
-    env_file:
-      - .env
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - TZ=Europe/Paris
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - DATABASE_URL=mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:3306/${DATABASE_NAME}?serverVersion=${DATABASE_VERSION}
     volumes:
-      - ./.docker/database:/var/lib/mysql
-    labels:
-      - "traefik.enable=false"
+      - .:/var/www/app/
+    user: "${UID:-1000}:${GID:-1000}"
+    depends_on:
+        - database
 
 # docker-compose run --rm composer require machin/truc
   composer:
@@ -89,31 +57,35 @@ services:
     command: -V
     entrypoint: ['/usr/bin/composer']
 
-# docker-compose run --rm artisan key:generate
-  artisan:
+    # docker-compose run --rm console secrets:set --local
+  console:
     <<: *php-fpm
-    container_name: ${APP_PROJECT}-artisan
-    depends_on:
-      - mariadb
-    command: inspire
-    entrypoint: ['/var/www/app/artisan']
+    container_name: ${APP_PROJECT}-console
+    working_dir: /var/www/app/
+    user: "${UID:-1000}:${GID:-1000}"
+    entrypoint: ['/var/www/app/bin/console']
 
-  scheduler:
-    <<: *php-fpm
-    container_name: ${APP_PROJECT}-scheduler
-    restart: unless-stopped
-    depends_on:
-      - mariadb
-    profiles:
-      - scheduler
-    command: ["/usr/sbin/crond", "-f", "-l", "2"]
+  database:
+    container_name: ${APP_PROJECT}-db
+    image: mariadb:latest
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    ports:
+        - "3306:3306"
+    environment:
+        - MYSQL_DATABASE=${DATABASE_NAME}
+        - MYSQL_USER=${DATABASE_USER}
+        - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+        - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+        - TZ=Europe/Paris
+    volumes:
+        - ./.docker/database:/var/lib/mysql
 
-# docker-compose run --rm npm install
+  # docker-compose run --rm npm install
   npm:
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    volumes:
-      - .:/var/www/app/:rw
+    volumes_from:
+      - php-fpm
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
@@ -158,29 +130,14 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
       - "diun.enable=true"
 
-  # mailhog:
-  #   image: mailhog/mailhog:latest
-  #   container_name: ${APP_PROJECT}-mailhog
-  #   # ports:
-  #   #   - "8003:1025" # SMTP Port
-  #   #   - "8100:8025" # UI Port
-  #   profiles:
-  #     - mail
-  #   labels:
-  #     - "traefik.http.routers.mailhog-${APP_PROJECT}.rule=Host(`mailhog.${APP_DOMAIN}`)"
-  #     - "traefik.http.services.mailhog-${APP_PROJECT}-service.loadbalancer.server.port=8025"
-  #     - "com.centurylinklabs.watchtower.enable=true"
-  #     - "diun.enable=true"
-
   maildev:
-    image: maildev/maildev
+    image: djfarrelly/maildev
     container_name: ${APP_PROJECT}-maildev
     # ports:
     #   - "1025:25"
     #   - "1080:80"
-    environment:
-      MAILDEV_SMTP_PORT: 25
-      MAILDEV_WEB_PORT: 80
+    profiles:
+      - mail
     labels:
       - "traefik.http.routers.maildev-${APP_PROJECT}.rule=Host(`maildev.${APP_DOMAIN}`)"
       - "traefik.http.services.maildev-${APP_PROJECT}-service.loadbalancer.server.port=80"
@@ -191,7 +148,7 @@ services:
     container_name: ${APP_PROJECT}-adminer
     image: adminer:latest
     environment:
-        ADMINER_DEFAULT_SERVER: ${DB_HOST:-mariadb}
+        ADMINER_DEFAULT_SERVER: ${DB_HOST:-database}
         ADMINER_DESIGN: flat
     # ports:
     #   - 8888:8080

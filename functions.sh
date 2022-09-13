@@ -39,6 +39,18 @@ $VARIABLE=$VALUE" $FILE
     rm -f $FILE.tmp
 }
 
+# setVar(File, Variable, Value)
+function setVarIfExists() {
+    FILE=$1
+    VARIABLE=$2
+    VALUE=$3
+
+    if grep -q "${VARIABLE}=" $FILE; then # Replace value
+        sed -i.tmp -e "s/$VARIABLE=.*/$VARIABLE=$VALUE/g" $FILE
+    fi
+    rm -f $FILE.tmp
+}
+
 function slugify () {
     echo "$1" | iconv -t ascii//TRANSLIT | sed -E 's/[^a-zA-Z0-9]+/-/g' | sed -E 's/^-+|-+$//g' | tr A-Z a-z
 }
@@ -96,17 +108,17 @@ function init-docker-for () {
             setVar $envfile 'APP_URL' '"http:\/\/${APP_DOMAIN}"'
             setVar $envfile 'APP_DOMAIN' "`slugify $projectname`.docker" 'APP_PROJECT'
 
-            setVar $envfile 'DB_HOST' '"${APP_PROJECT}-mariadb"'
-            setVar $envfile 'DB_DATABASE' `slugify $projectname`
-            setVar $envfile 'DB_USERNAME' 'app_user'
-            setVar $envfile 'DB_PASSWORD' 'secret'
+            setVarIfExists $envfile 'DB_HOST' '"${APP_PROJECT}-mariadb"'
+            setVarIfExists $envfile 'DB_DATABASE' `slugify $projectname`
+            setVarIfExists $envfile 'DB_USERNAME' 'app_user'
+            setVarIfExists $envfile 'DB_PASSWORD' 'secret'
 
-            setVar $envfile 'MEMCACHED_HOST' '"${APP_PROJECT}-memcached"'
+            setVarIfExists $envfile 'MEMCACHED_HOST' '"${APP_PROJECT}-memcached"'
 
-            setVar $envfile 'REDIS_HOST' '"${APP_PROJECT}-redis"'
+            setVarIfExists $envfile 'REDIS_HOST' '"${APP_PROJECT}-redis"'
 
-            setVar $envfile 'MAIL_HOST' '"${APP_PROJECT}-maildev"'
-            setVar $envfile 'MAIL_FROM_ADDRESS' '"mailer@${APP_DOMAIN}"'
+            setVarIfExists $envfile 'MAIL_HOST' '"${APP_PROJECT}-maildev"'
+            setVarIfExists $envfile 'MAIL_FROM_ADDRESS' '"mailer@${APP_DOMAIN}"'
         fi
     done
 

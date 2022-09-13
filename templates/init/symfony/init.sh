@@ -4,7 +4,7 @@ echo "Creating “$1” Symfony project"
 
 types=("microservice, console or api" "web application")
 PS3="Kind of “$1” project: "
-select type in $types;
+select kind in $types;
 do
     break;
 done

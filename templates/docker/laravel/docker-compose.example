@@ -110,7 +110,7 @@ services:
     command: ["/usr/sbin/crond", "-f", "-l", "2"]
 
 # docker-compose run --rm npm install
-  npm:
+  npm: &npm
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
     volumes:
@@ -120,6 +120,10 @@ services:
     user: "node"
     command: -v
     entrypoint: ['npm']
+
+  npx:
+    <<: *npm
+    entrypoint: ['npx']
 
   redis:
     container_name: ${APP_PROJECT}-redis

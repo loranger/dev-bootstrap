@@ -56,16 +56,20 @@ services:
     entrypoint: ['/usr/bin/composer']
 
 # docker-compose run --rm npm install
-  npm:
+  npm: &npm
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
     volumes:
-      - .:/var/www/app/:delegated
+      - .:/var/www/app/:rw
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
     command: -v
     entrypoint: ['npm']
+
+  npx:
+    <<: *npm
+    entrypoint: ['npx']
 
   mariadb:
     container_name: ${APP_PROJECT}-mariadb

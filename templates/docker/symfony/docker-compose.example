@@ -81,17 +81,21 @@ services:
     volumes:
         - ./.docker/database:/var/lib/mysql
 
-  # docker-compose run --rm npm install
-  npm:
+# docker-compose run --rm npm install
+  npm: &npm
     image: node:alpine
     container_name: ${APP_PROJECT}-npm
-    volumes_from:
-      - php-fpm
+    volumes:
+      - .:/var/www/app/:rw
     user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
     command: -v
     entrypoint: ['npm']
+
+  npx:
+    <<: *npm
+    entrypoint: ['npx']
 
   redis:
     container_name: ${APP_PROJECT}-redis

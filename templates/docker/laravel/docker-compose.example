@@ -123,7 +123,23 @@ services:
 
   npx:
     <<: *npm
+    profiles:
+      - npx
     entrypoint: ['npx']
+
+  vite:
+    <<: *npm
+    container_name: ${APP_PROJECT}-vite
+    command: "dev -- --host --port ${VITE_PORT:-5173}"
+    entrypoint: ['npm', 'run']
+    profiles:
+      - vite
+    labels:
+      # Simple HTTP traefik support
+      - "traefik.http.routers.${APP_PROJECT}-vite.rule=Host(`${VITE_URL}`)"
+      - "traefik.http.services.${APP_PROJECT}-vite-service.loadbalancer.server.port=${VITE_PORT:-5173}"
+      - "com.centurylinklabs.watchtower.enable=true"
+      - "diun.enable=true"
 
   redis:
     container_name: ${APP_PROJECT}-redis

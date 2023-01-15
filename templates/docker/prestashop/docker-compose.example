@@ -69,6 +69,8 @@ services:
 
   npx:
     <<: *npm
+    profiles:
+      - npx
     entrypoint: ['npx']
 
   mariadb:

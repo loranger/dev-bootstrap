@@ -1,0 +1,48 @@
+FROM php:7.4-fpm-bullseye
+# https://devdocs.prestashop.com/1.7/basics/installation/system-requirements/#php-compatibility-chart
+
+RUN apt update && \
+    apt install -y \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg-dev \
+        libmagickwand-dev \
+        libmcrypt-dev \
+        libmemcached-dev \
+        libonig-dev \
+        libpng-dev \
+        libwebp-dev \
+        libxml2-dev \
+        libzip-dev \
+        zlib1g-dev
+
+# ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
+RUN docker-php-ext-install bcmath gd intl mbstring mysqli pdo pdo_mysql soap zip
+
+RUN docker-php-ext-configure iconv
+RUN docker-php-ext-install iconv
+
+RUN pecl install imagick memcached mcrypt\
+    && docker-php-ext-enable imagick \
+    && docker-php-ext-enable memcached \
+    && docker-php-ext-enable mcrypt
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Enable writable composer cache
+RUN mkdir -p /.cache/composer && chmod 777 /.cache/composer
+
+
+RUN groupmod -g 1000 www-data \
+  && usermod -u 1000 -g 1000 www-data
+
+COPY /set_shop.sh /usr/local/bin/set_shop
+RUN chmod +x /usr/local/bin/set_shop
+
+COPY /run.sh /usr/local/bin/run_prestashop
+RUN chmod +x /usr/local/bin/run_prestashop
+
+WORKDIR /var/www/app
+
+CMD ["/usr/local/bin/run_prestashop"]

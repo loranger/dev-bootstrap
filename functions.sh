@@ -108,6 +108,11 @@ function init-docker-for () {
             setVar $envfile 'APP_URL' '"http:\/\/${APP_DOMAIN}"'
             setVar $envfile 'APP_DOMAIN' "`slugify $projectname`.docker" 'APP_PROJECT'
 
+            setVar $envfile 'VITE_URL' '"vite.${APP_DOMAIN}"'
+            setVar $envfile 'VITE_PORT' '3456'
+            setVar $envfile 'VITE_WEBSOCKET_URL' '"http:\/\/websocket.${APP_DOMAIN}/"'
+            setVar $envfile 'WEBSOCKET_URL' '"websocket.${APP_DOMAIN}"'
+
             setVarIfExists $envfile 'DB_HOST' '"${APP_PROJECT}-mariadb"'
             setVarIfExists $envfile 'DB_DATABASE' `slugify $projectname`
             setVarIfExists $envfile 'DB_USERNAME' 'app_user'

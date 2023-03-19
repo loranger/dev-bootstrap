@@ -60,6 +60,7 @@ services:
       - .env
     volumes:
       - .:/var/www/app/:rw
+      - ./.docker/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
     user: "${UID:-1000}:${GID:-1000}"
     labels:
       - "traefik.enable=false"

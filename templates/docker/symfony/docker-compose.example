@@ -46,6 +46,7 @@ services:
       - DATABASE_URL=mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:3306/${DATABASE_NAME}?serverVersion=${DATABASE_VERSION}
     volumes:
       - .:/var/www/app/
+      - ./.docker/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:ro
     user: "${UID:-1000}:${GID:-1000}"
     depends_on:
         - database

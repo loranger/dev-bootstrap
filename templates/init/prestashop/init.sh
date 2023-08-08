@@ -8,10 +8,14 @@ if [[ ${#presta_versions[@]} -eq 0 ]]; then
     break;
 fi
 
+IFS=$'\n'
+presta_versions=($(sort <<<"${presta_versions[*]}"))
+unset IFS
+
 PS3="Which Prestashop version do you require for “$1” project: "
 select version in "${presta_versions[@]}"; do
     # Manually specified version
-    if [[ "$REPLY" == *"\."* || -z "${presta_versions[$REPLY]}" ]]; then
+    if [[ "$REPLY" == *.*  || -z "${presta_versions[$REPLY]}" ]]; then
         version=$REPLY
     fi
 

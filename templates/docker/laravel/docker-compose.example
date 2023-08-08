@@ -116,7 +116,6 @@ services:
     container_name: ${APP_PROJECT}-npm
     volumes:
       - .:/var/www/app/:rw
-    user: "${UID:-1000}:${GID:-1000}"
     working_dir: /var/www/app/
     user: "node"
     command: -v
@@ -227,3 +226,4 @@ services:
 networks:
   default:
       name: web
+      external: true

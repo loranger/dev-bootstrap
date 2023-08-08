@@ -36,3 +36,4 @@ services:
 networks:
   default:
       name: web
+      external: true

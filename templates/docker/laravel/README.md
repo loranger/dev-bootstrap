@@ -17,16 +17,16 @@ Customize .env file regarding your environment setup (`APP_DOMAIN`, mainly)
 
 ```
 ...
-APP_DOMAIN=bradlead.docker
+APP_DOMAIN=project.docker
 ...
 ```
 
 Define the same value in your `/etc/hosts` file.  This is **not required** if you use [traefik](https://traefik.io/) reverse proxy (cf [nginx](#nginx)).
 
 ```
-127.0.0.1   bradlead.docker	www.bradlead.docker
-127.0.0.1   meilisearch.bradlead.docker	adminer.bradlead.docker
-127.0.0.1   mailhog.bradlead.docker	maildev.bradlead.docker
+127.0.0.1   project.docker	www.project.docker
+127.0.0.1   meilisearch.project.docker	adminer.project.docker
+127.0.0.1   mailhog.project.docker	maildev.project.docker
 ```
 
 Create the virtual network used by the container (and by traefik)

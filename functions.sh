@@ -9,6 +9,13 @@ fi
 
 template_path="$(dirname $0)/templates"
 
+function checkRequirement () {
+    if ! which $1 > /dev/null; then
+        echo "$1 command does not exist."
+        return 1
+    fi
+    return 0;
+}
 
 # replaceInFile(File, From, To)
 function replaceInFile() {
@@ -181,22 +188,27 @@ function init-remote-for () {
 }
 
 function init-git () {
-    # Remove remaining git repositories installed from .dependencies
-    find . -type d -mindepth 2 -name .git | xargs rm -rf \{\};
+    if [[ $(realpath $PWD) -ef $(realpath $(eval "$projectpath/`slugify $projectname`")) ]]
+    then
+        # Remove remaining git repositories installed from .dependencies
+        find . -type d -mindepth 2 -name .git | xargs rm -rf \{\};
 
-    git init
-    git add .gitignore
-    git add .
+        git init
+        git add .gitignore
+        git add .
 
-    if [ -z ${projectname} ]; then
-        projectname=$(basename `pwd`)
+        if [ -z ${projectname} ]; then
+            projectname=$(basename `pwd`)
+        fi
+        git commit -m ":tada: $projectname initial commit"
+    else
+        echo "Error with "$projectpath/`slugify $projectname`" path"
     fi
-    git commit -m ":tada: $projectname initial commit"
 }
 
 function init-editor () {
     if [ ! -z "$editor" ]; then
-        `$editor . &`
+        $editor . &
     fi
 }
 
@@ -246,3 +258,7 @@ function init-project ()
     init-git
     init-editor
 }
+
+(checkRequirement "iconv") || return $?
+(checkRequirement "sed") || return $?
+(checkRequirement "tr") || return $?

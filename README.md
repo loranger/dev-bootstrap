@@ -5,15 +5,13 @@ Setup a new web (PHP) project as simply as `init-project`
 Clone this repository and source the `functions.sh` from your `~.zshrc` or your `.aliases` :
 
 ```shell
-source ~/Developer/projects/dev-bootstrap/functions.sh
+source <path of the cloned dev-bootstrap>/functions.sh
 ```
 
 You're ready to go.
 You can also customize your [default projects path](https://github.com/loranger/dev-bootstrap/blob/main/functions.sh#L4) and/or your [favorite text editor](https://github.com/loranger/dev-bootstrap/blob/main/functions.sh#L3)
 
 # Usage
-
-
 
 ### Full init
 
@@ -76,3 +74,11 @@ You can also init deployer recipes specifying the type of the project you use :
 init-deployer-for laravel
 ```
 
+# Custom
+
+You can set your own preferences for your editor or the default project parent path by adding a `~/.dev-bootstrap.conf` file containing variables, like these:
+
+```bash
+editor=$VISUAL
+default_project_path="~/Projects"
+```

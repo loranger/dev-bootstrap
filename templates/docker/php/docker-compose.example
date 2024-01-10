@@ -2,7 +2,7 @@ version: "3.4"
 
 services:
 
-  site:
+  php: &php
     build:
       context: .
       dockerfile: .docker/php/Dockerfile
@@ -32,6 +32,14 @@ services:
 
       # # Enable https://containrrr.dev/watchtower/
       # - "com.centurylinklabs.watchtower.enable=true"
+
+  # docker-compose run --rm composer require machin/truc
+  composer:
+    <<: *php
+    container_name: ${APP_PROJECT}-composer
+    working_dir: /app/
+    command: -V
+    entrypoint: ['/usr/bin/composer']
 
 networks:
   default:

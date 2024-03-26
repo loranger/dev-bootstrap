@@ -25,6 +25,7 @@ Define the same value in your `/etc/hosts` file.  This is **not required** if yo
 
 ```
 127.0.0.1   project.docker	www.project.docker
+127.0.0.1   vite.project.docker websocket.project.docker
 127.0.0.1   meilisearch.project.docker	adminer.project.docker
 127.0.0.1   mailhog.project.docker	maildev.project.docker
 ```

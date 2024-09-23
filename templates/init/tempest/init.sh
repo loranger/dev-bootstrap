@@ -2,7 +2,7 @@
 
 echo "Creating “$1” Tempest project"
 
-composer create-project --prefer-dist tempest/app `slugify $1`
+composer create-project --prefer-dist tempest/app:1.0-alpha1 `slugify $1`
 
 cd `slugify $1`
 

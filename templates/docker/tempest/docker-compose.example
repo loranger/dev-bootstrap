@@ -1,5 +1,3 @@
-version: "3.4"
-
 services:
 
   php: &php
@@ -11,7 +9,7 @@ services:
     volumes:
       - ./:/app:delegated
     user: "${UID:-1000}:${GID:-1000}"
-    command: "php -S 0.0.0.0:80 -t /app"
+    command: "php -S 0.0.0.0:80 -t /app/public"
     labels:
       # Simple HTTP traefik support
       - "traefik.http.routers.${APP_PROJECT}.rule=Host(`${APP_DOMAIN}`)"

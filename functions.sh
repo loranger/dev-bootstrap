@@ -239,7 +239,11 @@ function init-project ()
     fi
 
     init-project-path `slugify $projectname` $projectpath
-    init-project-structure-for $type
+    
+    (init-project-structure-for $type) || return $?
+    # Make sure we're inside the project folder
+    cd `slugify $1`
+    
     read "?Do you need docker? [yN] " reply
     if [[ $reply =~ ^[Yy]$ ]]
     then

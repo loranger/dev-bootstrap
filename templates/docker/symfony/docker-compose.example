@@ -162,6 +162,28 @@ services:
       - "traefik.http.routers.${APP_PROJECT}-adminer.rule=Host(`adminer.${APP_DOMAIN}`)"
       - "traefik.http.services.${APP_PROJECT}-adminer-service.loadbalancer.server.port=8080"
 
+  whodb:
+    container_name: ${APP_PROJECT}-whodb
+    image: clidey/whodb
+    environment:
+      # Ollama Configuration
+      WHODB_OLLAMA_HOST: localhost
+      WHODB_OLLAMA_PORT: 11434
+      # Anthropic Configuration
+      WHODB_ANTHROPIC_API_KEY: your_key_here
+      # WHODB_ANTHROPIC_ENDPOINT: https://api.anthropic.com/v1
+      # OpenAI Configuration
+      WHODB_OPENAI_API_KEY: your_key_here
+      # WHODB_OPENAI_ENDPOINT: https://api.openai.com/v1
+    # ports:
+    #   - 8080:8080
+    profiles:
+      - whodb
+    labels:
+      # Simple HTTP traefik support
+      - "traefik.http.routers.${APP_PROJECT}-whodb.rule=Host(`whodb.${APP_DOMAIN}`)"
+      - "traefik.http.services.${APP_PROJECT}-whodb-service.loadbalancer.server.port=8080"
+
 networks:
   default:
       name: web

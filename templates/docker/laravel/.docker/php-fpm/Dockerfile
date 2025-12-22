@@ -2,7 +2,7 @@ FROM php:fpm-alpine
 
 # Mandatory depencencies
 RUN apk add --update --no-cache \
-  libzip-dev libpng-dev icu icu-dev
+    libzip-dev libpng-dev icu icu-dev
 
 # Enable PHP extensions
 # ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
@@ -13,22 +13,13 @@ RUN chmod +x /usr/local/bin/install-php-extensions && \
     install-php-extensions xdebug
 
 # Handle locales
-ENV MUSL_LOCALE_DEPS cmake make musl-dev gcc gettext-dev libintl
-ENV MUSL_LOCPATH /usr/share/i18n/locales/musl
-
-RUN apk add --no-cache \
-    $MUSL_LOCALE_DEPS \
-    && wget https://gitlab.com/rilian-la-te/musl-locales/-/archive/master/musl-locales-master.zip \
-    && unzip musl-locales-master.zip \
-      && cd musl-locales-master \
-      && cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && make && make install \
-      && cd .. && rm -r musl-locales-master
+RUN apk add musl-locales musl-locales-lang
 
 # Use local timezone
 RUN apk upgrade --update \
-  && apk add -U tzdata \
-  && cp /usr/share/zoneinfo/Europe/Paris /etc/localtime \
-  && apk del tzdata
+    && apk add -U tzdata \
+    && cp /usr/share/zoneinfo/Europe/Paris /etc/localtime \
+    && apk del tzdata
 
 # Mysql client availability (artisan db)
 RUN apk add mysql-client
